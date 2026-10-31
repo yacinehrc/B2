@@ -35,7 +35,7 @@ Le projet couvre un **CRUD complet** sur six entités (utilisateurs, contacts, d
 ## Fonctionnalités
 
 - **Inscription et connexion** : création de compte avec prénom, nom et mot de passe, connexion obligatoire pour accéder à l'application
-- **Identifiant automatique** : généré à l'inscription à partir de la 1ʳᵉ lettre du prénom et des 3 premières lettres du nom (Yacine Harrache → `y_har`), avec un numéro ajouté s'il est déjà pris
+- **Identifiant automatique** : généré à l'inscription à partir de la 1ʳᵉ lettre du prénom et des 3 premières lettres du nom (Alice Martin → `a_mar`), avec un numéro ajouté s'il est déjà pris
 - **Profil** : modification du nom, de l'identifiant, de la bio, de l'avatar et du mot de passe, suppression du compte
 - **Contacts** : envoi d'une demande d'ami par identifiant, acceptation, refus, annulation et retrait d'un ami
 - **Messages privés** : discussion à deux avec un ami, créée automatiquement à la première ouverture
