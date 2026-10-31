@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+
+parameters:
+
+services:
+    # Symfony injecte tout seul les dépendances dans les constructeurs et les contrôleurs
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # Chaque classe de src/ devient un service
+    App\:
+        resource: '../src/'

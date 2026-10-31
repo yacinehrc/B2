@@ -1,0 +1,61 @@
+{# L'aperçu de l'identifiant est calculé en JS, le vrai est généré côté serveur #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - Y - Messages{% endblock %}
+
+{% block body %}
+<div class="tw-min-h-screen tw-flex tw-items-center tw-justify-center tw-bg-gradient-to-br tw-from-discord-blurple tw-to-indigo-900 tw-p-4">
+    <div class="card tw-w-full tw-max-w-md tw-shadow-2xl">
+        <div class="card-body tw-p-8">
+            <h1 class="h3 tw-text-center text-white">Créer un compte</h1>
+            <p class="tw-text-center text-secondary">Rejoins Y - Messages</p>
+
+            {{ form_start(formulaire) }}
+                <div class="row">
+                    <div class="col">{{ form_row(formulaire.prenom) }}</div>
+                    <div class="col">{{ form_row(formulaire.nom) }}</div>
+                </div>
+
+                {# Aperçu de l'identifiant, mis à jour en direct par le petit script plus bas #}
+                <div class="alert alert-info tw-py-2 tw-text-sm">
+                    Ton identifiant sera : <strong id="apercu-identifiant">...</strong><br>
+                    <small>(1ère lettre du prénom + _ + 3 lettres du nom, un chiffre est ajouté s'il est déjà pris)</small>
+                </div>
+
+                {{ form_row(formulaire.motDePasseClair.first) }}
+                {{ form_row(formulaire.motDePasseClair.second) }}
+
+                <button type="submit" class="btn btn-primary tw-w-full tw-py-2">Créer mon compte</button>
+            {{ form_end(formulaire) }}
+
+            <p class="tw-mt-4 tw-mb-0 tw-text-sm text-secondary">
+                Déjà un compte ? <a href="{{ path('app_connexion') }}">Se connecter</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    // Calcule l'identifiant comme le fait le service PHP GenerateurIdentifiant (juste pour l'affichage)
+    const champPrenom = document.getElementById('{{ formulaire.prenom.vars.id }}');
+    const champNom = document.getElementById('{{ formulaire.nom.vars.id }}');
+    const apercu = document.getElementById('apercu-identifiant');
+
+    // "Élodie" -> "elodie" : on enlève les accents et tout ce qui n'est pas une lettre/un chiffre
+    function nettoyer(texte) {
+        return texte.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+    }
+
+    function mettreAJour() {
+        const prenom = nettoyer(champPrenom.value);
+        const nom = nettoyer(champNom.value);
+        apercu.textContent = (prenom || nom) ? prenom.substring(0, 1) + '_' + nom.substring(0, 3) : '...';
+    }
+
+    champPrenom.addEventListener('input', mettreAJour);
+    champNom.addEventListener('input', mettreAJour);
+    mettreAJour();
+</script>
+{% endblock %}

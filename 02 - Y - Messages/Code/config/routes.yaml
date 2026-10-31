@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../vendor/symfony/routing/Loader/schema/routing.schema.json
+
+# Les routes sont déclarées avec #[Route] dans les contrôleurs (liste : php bin/console debug:router)
+controllers:
+    resource: routing.controllers

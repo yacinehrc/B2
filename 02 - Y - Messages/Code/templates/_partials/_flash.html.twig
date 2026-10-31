@@ -1,0 +1,9 @@
+{# Messages créés avec addFlash(), le type correspond aux couleurs d'alerte de Bootstrap #}
+{% for type, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-{{ type }} alert-dismissible fade show tw-m-3 tw-mb-0" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+        </div>
+    {% endfor %}
+{% endfor %}

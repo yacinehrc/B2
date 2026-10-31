@@ -1,0 +1,4 @@
+when@dev:
+    debug:
+        # Envoie les dump() vers le serveur lancé avec "php bin/console server:dump"
+        dump_destination: "tcp://%env(VAR_DUMPER_SERVER)%"

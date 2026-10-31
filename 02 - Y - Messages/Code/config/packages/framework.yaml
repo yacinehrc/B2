@@ -1,0 +1,11 @@
+framework:
+    secret: '%env(APP_SECRET)%'
+
+    # La session ne démarre que quand on lit ou écrit dedans
+    session: true
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file

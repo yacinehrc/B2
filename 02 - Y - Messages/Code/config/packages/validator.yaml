@@ -1,0 +1,8 @@
+framework:
+    validation:
+        # Configuration par défaut : les règles sont les #[Assert\...] des entités et formulaires
+
+when@test:
+    framework:
+        validation:
+            not_compromised_password: false

@@ -1,0 +1,18 @@
+{# Page générique "titre + formulaire", réutilisée par tous les petits formulaires #}
+{% extends 'layout_app.html.twig' %}
+
+{% block title %}{{ titre }} - Y - Messages{% endblock %}
+
+{% block contenu %}
+    <div class="tw-p-8 tw-max-w-xl tw-w-full">
+        <h1 class="h3 tw-mb-6">{{ titre }}</h1>
+
+        {{ form_start(formulaire) }}
+            {{ form_widget(formulaire) }}
+            <div class="tw-flex tw-gap-2 tw-mt-4">
+                <button type="submit" class="btn btn-primary">{{ bouton }}</button>
+                <a href="javascript:history.back()" class="btn btn-link text-secondary">Annuler</a>
+            </div>
+        {{ form_end(formulaire) }}
+    </div>
+{% endblock %}

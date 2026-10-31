@@ -1,0 +1,39 @@
+{# Profil d'un utilisateur, le mien ou celui d'un autre #}
+{% extends 'layout_app.html.twig' %}
+
+{% set cestMoi = utilisateur.id == app.user.id %}
+
+{% block title %}{{ utilisateur.nomComplet }} - Y - Messages{% endblock %}
+
+{% block contenu %}
+    <div class="tw-p-8 tw-overflow-y-auto">
+        <div class="card tw-max-w-lg tw-overflow-hidden">
+            {# Bannière colorée façon Discord #}
+            <div class="tw-h-24 tw-bg-discord-blurple"></div>
+
+            <div class="card-body tw-relative tw-pt-14">
+                {# L'avatar "déborde" sur la bannière #}
+                <div class="tw-absolute -tw-top-12 tw-left-4 tw-rounded-full tw-border-[6px] tw-border-discord-800">
+                    {% include '_partials/_avatar.html.twig' with {utilisateur: utilisateur, taille: 88} %}
+                </div>
+
+                <h1 class="h4 tw-mb-0 text-white">{{ utilisateur.nomComplet }}</h1>
+                <p class="text-secondary">{{ utilisateur.identifiant }}</p>
+
+                <div class="tw-bg-discord-900 tw-rounded tw-p-3 tw-mb-3">
+                    <h2 class="tw-text-xs tw-uppercase tw-font-bold">À propos</h2>
+                    <p class="tw-mb-3" style="white-space: pre-wrap;">{{ utilisateur.bio ?: 'Aucune bio pour le moment.' }}</p>
+
+                    <h2 class="tw-text-xs tw-uppercase tw-font-bold">Membre depuis</h2>
+                    <p class="tw-mb-0">{{ utilisateur.creeLe|date('d/m/Y') }}</p>
+                </div>
+
+                {% if cestMoi %}
+                    <a href="{{ path('app_profil_modifier') }}" class="btn btn-primary"><i class="bi bi-pencil"></i> Modifier mon profil</a>
+                {% else %}
+                    <a href="{{ path('app_discussion_mp', {id: utilisateur.id}) }}" class="btn btn-primary"><i class="bi bi-chat-fill"></i> Envoyer un message</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

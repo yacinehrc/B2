@@ -1,0 +1,25 @@
+{# Page d'un salon de serveur #}
+{% extends 'layout_app.html.twig' %}
+
+{% block title %}#{{ salon.nom }} | {{ serveur.nom }} - Y - Messages{% endblock %}
+
+{% block barre_laterale %}
+    {% include '_partials/_barre_serveur.html.twig' %}
+{% endblock %}
+
+{% block contenu %}
+    <header class="tw-h-12 tw-shrink-0 tw-flex tw-items-center tw-gap-2 tw-px-4 tw-border-b tw-border-black/30 tw-shadow-sm">
+        <i class="bi bi-hash text-secondary tw-text-xl"></i>
+        <strong class="text-white">{{ salon.nom }}</strong>
+    </header>
+
+    {% include '_partials/_chat.html.twig' with {
+        messages: salon.messages,
+        url_rafraichir: path('app_salon_messages', {id: salon.id}),
+        placeholder: 'Envoyer un message dans #' ~ salon.nom,
+    } %}
+{% endblock %}
+
+{% block colonne_droite %}
+    {% include '_partials/_membres_serveur.html.twig' %}
+{% endblock %}

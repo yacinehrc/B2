@@ -1,0 +1,9 @@
+framework:
+    router:
+        # Sert à générer des URL complètes depuis une commande (hors requête HTTP)
+        default_uri: '%env(DEFAULT_URI)%'
+
+when@prod:
+    framework:
+        router:
+            strict_requirements: null

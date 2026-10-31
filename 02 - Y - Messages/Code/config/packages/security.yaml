@@ -1,0 +1,45 @@
+security:
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    # Les utilisateurs sont retrouvés en base par leur identifiant
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\Utilisateur
+                property: identifiant
+
+    firewalls:
+        # La barre de debug n'a pas besoin d'être protégée
+        dev:
+            pattern: ^/(_profiler(/|$)|(_wdt|assets|build)/)
+            security: false
+
+        main:
+            lazy: true
+            provider: app_user_provider
+
+            # Symfony traite lui-même le formulaire envoyé sur /connexion
+            form_login:
+                login_path: app_connexion
+                check_path: app_connexion
+                enable_csrf: true
+                default_target_path: app_accueil
+
+            logout:
+                path: app_deconnexion
+                target: app_connexion
+
+    # Seule la première règle qui correspond est appliquée
+    access_control:
+        - { path: ^/(connexion|inscription), roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: ROLE_USER }
+
+when@test:
+    security:
+        password_hashers:
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4
+                time_cost: 3
+                memory_cost: 10

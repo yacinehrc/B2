@@ -1,0 +1,291 @@
+# Y - Messages
+
+![Salon d'un serveur](./Images/salon.png)
+
+> Application de messagerie inspirée de Discord : amis, messages privés, groupes, serveurs et salons, avec des messages qui s'affichent en direct. Développée en **Symfony 8**, **Doctrine** et **MySQL** (via Docker), avec une interface **Bootstrap** et **Tailwind CSS**.
+
+---
+
+## Sommaire
+
+- [Introduction](#introduction)
+- [Fonctionnalités](#fonctionnalités)
+- [Technologies utilisées](#technologies-utilisées)
+- [Démonstration](#démonstration)
+- [Architecture](#architecture)
+- [Base de données](#base-de-données)
+- [Sécurité](#sécurité)
+- [Installation](#installation)
+- [Identifiants de test](#identifiants-de-test)
+- [Arborescence du dépôt](#arborescence-du-dépôt)
+- [Difficultés rencontrées](#difficultés-rencontrées)
+- [Perspectives d'évolution](#perspectives-dévolution)
+- [Conclusion](#conclusion)
+
+---
+
+## Introduction
+
+Ce projet est une **messagerie instantanée** réalisée dans le cadre de ma 2ème année, avec pour objectif de reproduire les fonctionnalités principales de Discord à l'aide du framework **Symfony**. L'application repose sur une architecture **MVC** : les entités Doctrine décrivent les données, les contrôleurs gèrent chaque action et les templates Twig construisent l'interface.
+
+Le projet couvre un **CRUD complet** sur six entités (utilisateurs, contacts, discussions, serveurs, salons et messages), une authentification sécurisée et un système de droits : on ne peut lire que les conversations et serveurs dont on est membre. La base de données MySQL tourne dans un conteneur **Docker** et se crée automatiquement au premier lancement à partir de scripts SQL.
+
+---
+
+## Fonctionnalités
+
+- **Inscription et connexion** : création de compte avec prénom, nom et mot de passe, connexion obligatoire pour accéder à l'application
+- **Identifiant automatique** : généré à l'inscription à partir de la 1ʳᵉ lettre du prénom et des 3 premières lettres du nom (Yacine Harrache → `y_har`), avec un numéro ajouté s'il est déjà pris
+- **Profil** : modification du nom, de l'identifiant, de la bio, de l'avatar et du mot de passe, suppression du compte
+- **Contacts** : envoi d'une demande d'ami par identifiant, acceptation, refus, annulation et retrait d'un ami
+- **Messages privés** : discussion à deux avec un ami, créée automatiquement à la première ouverture
+- **Groupes** : discussion à plusieurs, renommage, ajout de membres et départ du groupe
+- **Serveurs et salons** : création d'un serveur avec un salon `#général`, ajout de salons, invitation et retrait de membres, gestion réservée au propriétaire
+- **Messages** : envoi, modification (avec la mention « modifié ») et suppression de ses propres messages
+- **Affichage en direct** : les nouveaux messages apparaissent sans recharger la page grâce à un rafraîchissement automatique toutes les 3 secondes
+
+---
+
+## Technologies utilisées
+
+| Outil | Rôle |
+|---|---|
+| **PHP 8.4** + **Symfony 8.1** | Framework back-end : routes, contrôleurs, formulaires, sécurité |
+| **Doctrine ORM** | Lien entre les classes PHP (entités) et les tables MySQL |
+| **Twig** | Moteur de templates pour générer les pages HTML |
+| **MySQL 8.4** + **phpMyAdmin** | Base de données et interface d'administration, lancées avec **Docker Compose** |
+| **Bootstrap 5.3** | Composants d'interface : boutons, formulaires, alertes, menus déroulants |
+| **Tailwind CSS 3** | Mise en page et couleurs, avec le préfixe `tw-` pour cohabiter avec Bootstrap |
+| **JavaScript** | Rafraîchissement automatique des messages avec `fetch()` |
+
+---
+
+## Démonstration
+
+### Connexion et inscription
+
+L'accès à l'application nécessite un compte. La page de connexion demande l'identifiant et le mot de passe ; la vérification est assurée par le composant de sécurité de Symfony.
+
+![Page de connexion](./Images/connexion.png)
+
+À l'inscription, l'utilisateur saisit seulement son prénom, son nom et son mot de passe. L'identifiant qui lui sera attribué s'affiche en direct pendant la saisie.
+
+![Page d'inscription](./Images/inscription.png)
+
+### Amis
+
+La page d'accueil regroupe l'ajout d'un ami par son identifiant, les demandes reçues (à accepter ou refuser) et la liste des amis, avec un accès direct au message privé.
+
+![Page des amis](./Images/amis.png)
+
+### Messages privés et groupes
+
+Les discussions sont listées dans la barre latérale. Un message privé relie deux amis ; on peut modifier ou supprimer ses propres messages, qui sont alors marqués « modifié ».
+
+![Message privé](./Images/message-prive.png)
+
+Un groupe réunit plusieurs amis autour d'un nom. La colonne de droite affiche les membres et permet d'en ajouter de nouveaux.
+
+![Discussion de groupe](./Images/groupe.png)
+
+Une nouvelle discussion se crée en cochant un ou plusieurs amis : un seul ami ouvre un message privé, plusieurs amis créent un groupe.
+
+![Création d'une discussion](./Images/nouvelle-discussion.png)
+
+### Serveurs et salons
+
+Chaque serveur apparaît sous forme de bulle dans la colonne de gauche. Il contient des salons textuels et une liste de membres, où le propriétaire est signalé par une étoile.
+
+![Salon d'un serveur](./Images/salon.png)
+
+Le menu du serveur permet au propriétaire de créer un salon, de renommer le serveur ou de le supprimer avec tout son contenu. Les autres membres peuvent seulement le quitter.
+
+![Menu du serveur](./Images/menu-serveur.png)
+
+### Profil
+
+Le profil affiche l'avatar, l'identifiant, la bio et la date d'inscription. Depuis un autre profil, un bouton permet d'envoyer directement un message.
+
+![Profil utilisateur](./Images/profil.png)
+
+---
+
+## Architecture
+
+L'application suit le modèle **MVC** de Symfony : une URL appelle une méthode de contrôleur, qui récupère les données via Doctrine puis les transmet à un template Twig.
+
+```
+Navigateur ──► Route (#[Route]) ──► Contrôleur ──► Repository / Entité ──► MySQL
+     ▲                                   │
+     └──────────── HTML ◄── Template Twig ◄┘
+```
+
+| Couche | Dossier | Contenu |
+|---|---|---|
+| Entités | `src/Entity/` | `Utilisateur`, `Contact`, `Discussion`, `Serveur`, `Salon`, `Message` |
+| Repositories | `src/Repository/` | Requêtes personnalisées (amis d'un utilisateur, MP existant entre deux personnes...) |
+| Contrôleurs | `src/Controller/` | Un contrôleur par domaine : inscription, contacts, discussions, serveurs, salons, messages, profil |
+| Formulaires | `src/Form/` | Formulaires Symfony avec validation |
+| Service | `src/Service/` | `GenerateurIdentifiant`, qui construit l'identifiant unique à l'inscription |
+| Vues | `templates/` | Templates Twig, découpés en éléments réutilisables (avatar, zone de chat, barres latérales) |
+
+**L'affichage en direct** repose sur du *polling* : un script JavaScript interroge toutes les 3 secondes une route qui renvoie uniquement la liste des messages, puis la remplace dans la page sans la recharger.
+
+---
+
+## Base de données
+
+### MCD
+
+```mermaid
+flowchart LR
+    U["UTILISATEUR<br>id<br>identifiant<br>prenom<br>nom<br>mot_de_passe<br>bio<br>avatar<br>cree_le"]
+    C["CONTACT<br>id<br>statut<br>cree_le"]
+    D["DISCUSSION<br>id<br>nom<br>cree_le"]
+    S["SERVEUR<br>id<br>nom<br>cree_le"]
+    SA["SALON<br>id<br>nom"]
+    M["MESSAGE<br>id<br>contenu<br>cree_le<br>modifie_le"]
+
+    U ---|"0,n"| env((envoyer))
+    env ---|"1,1"| C
+    U ---|"0,n"| rec((recevoir))
+    rec ---|"1,1"| C
+    U ---|"0,n"| par((participer))
+    par ---|"1,n"| D
+    U ---|"0,n"| pos((posséder))
+    pos ---|"1,1"| S
+    U ---|"0,n"| mem((être membre))
+    mem ---|"1,n"| S
+    S ---|"0,n"| con((contenir))
+    con ---|"1,1"| SA
+    U ---|"0,n"| ecr((écrire))
+    ecr ---|"1,1"| M
+    D ---|"0,n"| cd((contenir))
+    cd ---|"0,1"| M
+    SA ---|"0,n"| cs((contenir))
+    cs ---|"0,1"| M
+```
+
+Les cardinalités se lisent « minimum, maximum ». Trois règles de gestion complètent le schéma :
+
+- un message appartient **soit** à une discussion, **soit** à un salon, jamais aux deux ;
+- une discussion qui n'a plus de membre est supprimée ;
+- un serveur peut ne contenir aucun salon si son propriétaire les a tous supprimés.
+
+### Tables
+
+Les associations *participer* et *être membre* deviennent les tables de liaison `discussion_utilisateur` et `serveur_utilisateur`. Les autres associations deviennent des clés étrangères avec `ON DELETE CASCADE` : supprimer un serveur supprime ses salons et leurs messages.
+
+| Table | Contenu |
+|---|---|
+| `utilisateur` | Comptes : identifiant unique, prénom, nom, mot de passe hashé, bio, avatar |
+| `contact` | Demandes d'ami : demandeur, destinataire et statut (`en_attente` ou `accepte`) |
+| `discussion` | Messages privés (sans nom) et groupes (avec nom) |
+| `serveur` | Serveurs et leur propriétaire |
+| `salon` | Salons rattachés à un serveur |
+| `message` | Messages rattachés à une discussion ou à un salon |
+
+Les scripts de création et les données de démonstration se trouvent dans [`Code/database/`](./Code/database/).
+
+---
+
+## Sécurité
+
+- **Mots de passe hashés** avec bcrypt, jamais stockés en clair
+- **Accès protégé** : toutes les pages exigent d'être connecté, sauf la connexion et l'inscription
+- **Contrôle des droits** : chaque action vérifie que l'utilisateur est membre de la discussion ou du serveur (erreur 403 sinon), et seul le propriétaire peut gérer un serveur
+- **Protection CSRF** : chaque formulaire et chaque action de suppression contiennent un jeton vérifié par Symfony
+- **Protection XSS** : Twig échappe automatiquement le contenu des messages
+- **Validation** des données côté serveur (champs obligatoires, longueur, format de l'identifiant, type et taille des images)
+
+---
+
+## Installation
+
+Prérequis : PHP 8.4, Composer, Symfony CLI et Docker Desktop.
+
+```bash
+cd Code
+composer install
+docker compose up -d
+symfony serve -d
+```
+
+L'application est ensuite disponible sur <http://127.0.0.1:8000>, et phpMyAdmin sur <http://localhost:8081>. Au premier lancement, Docker crée automatiquement les tables et les données de démonstration.
+
+Le détail de l'installation, des commandes utiles et du dépannage se trouve dans [`Code/README.md`](./Code/README.md).
+
+---
+
+## Identifiants de test
+
+Tous les comptes de démonstration utilisent le mot de passe **`motdepasse`**.
+
+| Identifiant | Utilisateur | Situation |
+|---|---|---|
+| `a_mar` | Alice Martin | Propriétaire du serveur *Gaming*, a reçu une demande d'ami de David |
+| `b_dup` | Bob Dupont | Ami d'Alice et de Chloé |
+| `c_ber` | Chloé Bernard | Amie d'Alice et de Bob |
+| `d_ler` | David Leroy | En attente de la réponse d'Alice |
+
+Pour tester l'affichage en direct, il suffit d'ouvrir deux navigateurs connectés avec deux comptes différents.
+
+---
+
+## Arborescence du dépôt
+
+```
+02 - Y - Messages/
+├── README.md
+├── Images/                  # Captures d'écran du README
+└── Code/                    # Projet Symfony
+    ├── compose.yaml         # MySQL + phpMyAdmin (Docker)
+    ├── database/            # Scripts SQL : tables et données de démo
+    ├── config/              # Configuration (sécurité, Doctrine, Twig...)
+    ├── public/              # CSS, JavaScript de l'auto-refresh, avatars
+    ├── src/
+    │   ├── Controller/
+    │   ├── Entity/
+    │   ├── Form/
+    │   ├── Repository/
+    │   └── Service/
+    └── templates/           # Vues Twig
+```
+
+---
+
+## Difficultés rencontrées
+
+- **Faire cohabiter Bootstrap et Tailwind** : les deux frameworks utilisent des noms de classes proches. Tailwind a été configuré avec le préfixe `tw-` et sans sa réinitialisation CSS, ce qui permet d'utiliser Bootstrap pour les composants et Tailwind pour la mise en page.
+- **Effet de bord de l'auto-refresh** : après une déconnexion, les requêtes automatiques étaient mémorisées par Symfony comme « page à ouvrir après connexion », et l'utilisateur arrivait sur une page incomplète. Le problème a été corrigé en marquant ces requêtes comme AJAX (`X-Requested-With`).
+- **Modification de l'identifiant** : une saisie invalide restait en mémoire et Symfony déconnectait l'utilisateur, croyant que son identifiant avait changé. L'entité est maintenant rechargée depuis la base en cas d'erreur.
+- **Environnement Docker** : sous Windows, Docker Desktop refusait de démarrer à cause d'anciens fichiers socket impossibles à supprimer. La solution est documentée dans le guide d'installation.
+
+---
+
+## Perspectives d'évolution
+
+- **Vrai temps réel** : remplacer le rafraîchissement toutes les 3 secondes par Mercure ou des WebSockets
+- **Messages non lus** : compteur de nouveaux messages par discussion
+- **Rôles dans les serveurs** : modérateurs pouvant gérer les salons et supprimer des messages
+- **Invitations** : lien d'invitation pour rejoindre un serveur sans être ami avec son propriétaire
+- **Messages enrichis** : images, fichiers joints, réactions et réponses à un message
+- **Pagination** : chargement progressif des anciens messages
+- **Qualité** : tests automatisés avec PHPUnit et centralisation des droits dans des Voters Symfony
+- **Version mobile** : interface adaptée aux petits écrans
+
+---
+
+## Conclusion
+
+Ce projet m'a permis de découvrir le framework Symfony en construisant une application complète, de la base de données à l'interface. Il m'a fait travailler :
+
+- la modélisation des données (MCD, relations un-à-plusieurs et plusieurs-à-plusieurs) et leur traduction en entités Doctrine ;
+- l'organisation d'une application en MVC avec des contrôleurs, des formulaires et des templates réutilisables ;
+- la sécurité web : authentification, hachage des mots de passe, contrôle des droits et protections CSRF et XSS ;
+- la mise en place d'un environnement de développement avec Docker ;
+- la gestion d'un affichage dynamique en JavaScript.
+
+---
+
+*Réalisé par [Yacine Harrache](https://github.com/yacinehrc) — Étudiant en 2ème année | EPSI Lille*

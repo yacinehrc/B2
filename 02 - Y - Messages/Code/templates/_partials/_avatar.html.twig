@@ -1,0 +1,15 @@
+{# Avatar rond : l'image envoyée, sinon l'initiale sur une couleur. Variables : utilisateur, taille #}
+{% set taille = taille|default(40) %}
+{% set couleurs = ['#5865f2', '#3ba55c', '#faa61a', '#ed4245', '#eb459e', '#00a8fc'] %}
+
+{% if utilisateur.avatar %}
+    <img src="{{ asset('uploads/avatars/' ~ utilisateur.avatar) }}" alt="Avatar de {{ utilisateur.prenom }}"
+         class="tw-rounded-full tw-object-cover tw-shrink-0"
+         style="width: {{ taille }}px; height: {{ taille }}px;">
+{% else %}
+    <span class="tw-rounded-full tw-shrink-0 tw-flex tw-items-center tw-justify-center tw-font-bold tw-text-white"
+          style="width: {{ taille }}px; height: {{ taille }}px; font-size: {{ taille * 0.45 }}px;
+                 background: {{ couleurs[utilisateur.id % couleurs|length] }};">
+        {{ utilisateur.initiale }}
+    </span>
+{% endif %}

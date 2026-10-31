@@ -1,0 +1,45 @@
+{# Modification du profil et suppression du compte #}
+{% extends 'layout_app.html.twig' %}
+
+{% block title %}Mon profil - Y - Messages{% endblock %}
+
+{% block contenu %}
+    <div class="tw-p-8 tw-overflow-y-auto">
+        <div class="tw-max-w-xl">
+            <h1 class="h3 tw-mb-6">Mon profil</h1>
+
+            <div class="tw-flex tw-items-center tw-gap-3 tw-mb-4">
+                {% include '_partials/_avatar.html.twig' with {utilisateur: app.user, taille: 72} %}
+                <span class="text-secondary">Avatar actuel</span>
+            </div>
+
+            {# form_row affiche : le label + le champ + les erreurs + l'aide d'un champ #}
+            {{ form_start(formulaire) }}
+                {{ form_row(formulaire.identifiant) }}
+                <div class="row">
+                    <div class="col">{{ form_row(formulaire.prenom) }}</div>
+                    <div class="col">{{ form_row(formulaire.nom) }}</div>
+                </div>
+                {{ form_row(formulaire.bio) }}
+                {{ form_row(formulaire.fichierAvatar) }}
+                {{ form_row(formulaire.nouveauMotDePasse) }}
+
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <a href="{{ path('app_profil') }}" class="btn btn-link text-secondary">Annuler</a>
+            {{ form_end(formulaire) }}
+
+            {# Zone dangereuse : supprimer le compte #}
+            <div class="card tw-mt-10 tw-border-red-500/50">
+                <div class="card-body">
+                    <h2 class="h6 text-danger">Supprimer mon compte</h2>
+                    <p class="text-secondary tw-text-sm">Tes messages, tes amis et tes serveurs seront supprimés définitivement.</p>
+                    <form method="post" action="{{ path('app_profil_supprimer') }}"
+                          onsubmit="return confirm('Es-tu vraiment sûr ? Cette action est définitive.');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('supprimer_compte') }}">
+                        <button type="submit" class="btn btn-outline-danger">Supprimer mon compte</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

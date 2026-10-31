@@ -1,0 +1,33 @@
+# MySQL + phpMyAdmin pour le projet (démarrer : docker compose up -d)
+name: y-messages # nom fixe, sinon Docker prendrait celui du dossier ("Code")
+services:
+
+    database:
+        image: mysql:8.4
+        container_name: ymessages_mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: y_messages
+            MYSQL_USER: ymessages          # identifiants repris dans DATABASE_URL (.env)
+            MYSQL_PASSWORD: ymessages
+        ports:
+            - "3306:3306"                  # port du PC : port du conteneur
+        volumes:
+            - mysql_data:/var/lib/mysql    # les données survivent à un redémarrage
+            # Au tout premier lancement, MySQL exécute les .sql de ./database par ordre alphabétique
+            - ./database:/docker-entrypoint-initdb.d
+        command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+    # Interface web sur http://localhost:8081 (ymessages / ymessages)
+    phpmyadmin:
+        image: phpmyadmin:5.2
+        container_name: ymessages_phpmyadmin
+        environment:
+            PMA_HOST: database
+        ports:
+            - "8081:80"
+        depends_on:
+            - database
+
+volumes:
+    mysql_data:

@@ -1,0 +1,83 @@
+/* Couleurs de Discord appliquées au thème sombre de Bootstrap */
+[data-bs-theme="dark"] {
+    --bs-body-bg: #313338;
+    --bs-body-color: #dbdee1;
+    --bs-secondary-color: #949ba4;
+    --bs-border-color: #3f4147;
+    --bs-tertiary-bg: #2b2d31;
+}
+
+.btn-primary {
+    --bs-btn-bg: #5865f2;
+    --bs-btn-border-color: #5865f2;
+    --bs-btn-hover-bg: #4752c4;
+    --bs-btn-hover-border-color: #4752c4;
+    --bs-btn-active-bg: #3c45a5;
+    --bs-btn-active-border-color: #3c45a5;
+}
+
+.form-control,
+.form-select {
+    background-color: #1e1f22;
+    border-color: #1e1f22;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: #1e1f22;
+    border-color: #5865f2;
+    box-shadow: none;
+}
+
+.card {
+    --bs-card-bg: #2b2d31;
+    --bs-card-border-color: #1e1f22;
+}
+
+/* Bulle ronde d'un serveur, qui devient un carré arrondi au survol */
+.bulle-serveur {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #313338;
+    color: #dbdee1;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-radius 0.2s, background 0.2s;
+}
+
+.bulle-serveur:hover,
+.bulle-serveur.actif {
+    border-radius: 16px;
+    background: #5865f2;
+    color: #fff;
+}
+
+/* Lien de la barre latérale (discussion, salon, Amis) */
+.lien-sidebar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: 4px;
+    color: #949ba4;
+    text-decoration: none;
+}
+
+.lien-sidebar:hover {
+    background: #35373c;
+    color: #dbdee1;
+}
+
+.lien-sidebar.actif {
+    background: #404249;
+    color: #fff;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #1a1b1e transparent;
+}

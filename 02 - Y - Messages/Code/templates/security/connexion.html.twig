@@ -1,0 +1,44 @@
+{# Formulaire écrit à la main car traité par form_login : les champs doivent s'appeler _username et _password #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion - Y - Messages{% endblock %}
+
+{% block body %}
+<div class="tw-min-h-screen tw-flex tw-items-center tw-justify-center tw-bg-gradient-to-br tw-from-discord-blurple tw-to-indigo-900 tw-p-4">
+    <div class="card tw-w-full tw-max-w-md tw-shadow-2xl">
+        <div class="card-body tw-p-8">
+            <div class="tw-text-center tw-mb-6">
+                <div class="tw-inline-flex tw-w-16 tw-h-16 tw-rounded-2xl tw-bg-discord-blurple tw-items-center tw-justify-center tw-text-3xl tw-font-black text-white">Y</div>
+                <h1 class="h3 tw-mt-3 tw-mb-1 text-white">Content de te revoir !</h1>
+                <p class="text-secondary">Connecte-toi à Y - Messages</p>
+            </div>
+
+            {% if erreur %}
+                <div class="alert alert-danger">Identifiant ou mot de passe incorrect.</div>
+            {% endif %}
+
+            <form method="post">
+                <div class="tw-mb-3">
+                    <label for="identifiant" class="form-label tw-text-xs tw-uppercase tw-font-bold">Identifiant</label>
+                    <input type="text" id="identifiant" name="_username" value="{{ dernier_identifiant }}"
+                           class="form-control" placeholder="ex : y_har" autocomplete="username" required autofocus>
+                </div>
+                <div class="tw-mb-4">
+                    <label for="mot_de_passe" class="form-label tw-text-xs tw-uppercase tw-font-bold">Mot de passe</label>
+                    <input type="password" id="mot_de_passe" name="_password"
+                           class="form-control" autocomplete="current-password" required>
+                </div>
+
+                {# Jeton anti-CSRF attendu par Symfony #}
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button type="submit" class="btn btn-primary tw-w-full tw-py-2">Se connecter</button>
+            </form>
+
+            <p class="tw-mt-4 tw-mb-0 tw-text-sm text-secondary">
+                Pas encore de compte ? <a href="{{ path('app_inscription') }}">Créer un compte</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

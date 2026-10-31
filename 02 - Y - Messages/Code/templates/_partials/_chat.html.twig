@@ -1,0 +1,20 @@
+{# Zone de chat commune aux discussions et aux salons #}
+
+{# data-url : l'adresse que le JavaScript appellera pour récupérer les nouveaux messages #}
+<div id="zone-messages" class="tw-flex-1 tw-overflow-y-auto tw-px-4 tw-py-3" data-url="{{ url_rafraichir }}">
+    {% include 'message/_liste.html.twig' %}
+</div>
+
+<div class="tw-px-4 tw-pb-5">
+    {{ form_start(formulaire, {attr: {class: 'tw-flex tw-gap-2'}}) }}
+        <div class="tw-flex-1">
+            {{ form_widget(formulaire.contenu, {attr: {placeholder: placeholder, autocomplete: 'off', autofocus: true, class: 'tw-bg-discord-600 tw-border-discord-600 tw-py-2.5'}}) }}
+            {{ form_errors(formulaire.contenu) }}
+        </div>
+        <button type="submit" class="btn btn-primary tw-self-start tw-py-2.5" title="Envoyer">
+            <i class="bi bi-send-fill"></i>
+        </button>
+    {{ form_end(formulaire) }}
+</div>
+
+<script src="{{ asset('js/chat.js') }}"></script>

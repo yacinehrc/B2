@@ -1,0 +1,31 @@
+{# Barre latérale de l'accueil : lien Amis + mes discussions #}
+{% set route = app.request.attributes.get('_route') %}
+
+<div class="tw-p-2">
+    <a href="{{ path('app_accueil') }}" class="lien-sidebar tw-font-semibold {{ route == 'app_accueil' ? 'actif' }}">
+        <i class="bi bi-people-fill tw-text-lg"></i> Amis
+    </a>
+
+    <div class="tw-flex tw-justify-between tw-items-center tw-mt-4 tw-mb-1 tw-px-2 tw-text-xs tw-uppercase tw-font-bold text-secondary">
+        Messages privés
+        <a href="{{ path('app_discussion_nouvelle') }}" class="text-secondary" title="Nouvelle discussion">
+            <i class="bi bi-plus-lg"></i>
+        </a>
+    </div>
+
+    {% for d in app.user.discussions %}
+        <a href="{{ path('app_discussion_voir', {id: d.id}) }}"
+           class="lien-sidebar {{ discussion is defined and discussion.id == d.id ? 'actif' }}">
+            {% if d.estUnGroupe %}
+                <span class="tw-w-8 tw-h-8 tw-rounded-full tw-bg-green-600 tw-flex tw-items-center tw-justify-center tw-shrink-0 text-white">
+                    <i class="bi bi-people-fill"></i>
+                </span>
+            {% elseif d.autreMembre(app.user) %}
+                {% include '_partials/_avatar.html.twig' with {utilisateur: d.autreMembre(app.user), taille: 32} %}
+            {% endif %}
+            <span class="text-truncate">{{ d.titrePour(app.user) }}</span>
+        </a>
+    {% else %}
+        <p class="tw-text-sm text-secondary tw-px-2">Aucune discussion pour l'instant.</p>
+    {% endfor %}
+</div>

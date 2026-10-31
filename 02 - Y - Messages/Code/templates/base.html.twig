@@ -1,0 +1,46 @@
+{# Squelette commun à toutes les pages : Bootstrap pour les composants, Tailwind (préfixe tw-) pour la mise en page #}
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="dark">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Y - Messages{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2230%22 fill=%22%235865f2%22/><text x=%2250%22 y=%2272%22 font-size=%2265%22 font-family=%22Arial%22 font-weight=%22bold%22 fill=%22white%22 text-anchor=%22middle%22>Y</text></svg>">
+
+        {# Bootstrap (CSS) + icônes Bootstrap #}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+        {# Tailwind (version CDN) #}
+        <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+        <script>
+            tailwind.config = {
+                prefix: 'tw-',                         // toutes les classes Tailwind commencent par "tw-"
+                corePlugins: { preflight: false },     // on garde le "reset" CSS de Bootstrap
+                theme: {
+                    extend: {
+                        // Les couleurs de Discord, utilisables avec tw-bg-discord-800, tw-text-discord-blurple...
+                        colors: {
+                            discord: {
+                                900: '#1e1f22', 850: '#232428', 800: '#2b2d31', 750: '#2e3035',
+                                700: '#313338', 600: '#383a40', 500: '#404249', blurple: '#5865f2',
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+
+        {# Nos quelques styles maison #}
+        <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
+        {% block stylesheets %}{% endblock %}
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+
+        {# Bootstrap (JS) : nécessaire pour les menus déroulants et les alertes qu'on ferme #}
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>

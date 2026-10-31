@@ -1,0 +1,66 @@
+{# Barre latérale d'un serveur : menu du serveur + liste des salons #}
+{% set proprietaire = serveur.estProprietaire(app.user) %}
+
+{# Nom du serveur avec un menu déroulant Bootstrap #}
+<div class="dropdown">
+    <button class="tw-w-full tw-h-12 tw-px-4 tw-flex tw-items-center tw-justify-between tw-bg-transparent tw-border-0 tw-border-b tw-border-black/30 tw-shadow-sm text-white tw-font-bold"
+            data-bs-toggle="dropdown">
+        <span class="text-truncate">{{ serveur.nom }}</span>
+        <i class="bi bi-chevron-down"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-dark tw-w-56">
+        {% if proprietaire %}
+            <li><a class="dropdown-item" href="{{ path('app_salon_nouveau', {id: serveur.id}) }}"><i class="bi bi-plus-circle me-2"></i>Créer un salon</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_serveur_modifier', {id: serveur.id}) }}"><i class="bi bi-pencil me-2"></i>Renommer le serveur</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form method="post" action="{{ path('app_serveur_supprimer', {id: serveur.id}) }}"
+                      onsubmit="return confirm('Supprimer le serveur, ses salons et tous les messages ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('serveur') }}">
+                    <button type="submit" class="dropdown-item text-danger"><i class="bi bi-trash me-2"></i>Supprimer le serveur</button>
+                </form>
+            </li>
+        {% else %}
+            <li>
+                <form method="post" action="{{ path('app_serveur_quitter', {id: serveur.id}) }}"
+                      onsubmit="return confirm('Quitter ce serveur ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('serveur') }}">
+                    <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-left me-2"></i>Quitter le serveur</button>
+                </form>
+            </li>
+        {% endif %}
+    </ul>
+</div>
+
+{# Liste des salons #}
+<div class="tw-p-2">
+    <div class="tw-flex tw-justify-between tw-items-center tw-mt-2 tw-mb-1 tw-px-2 tw-text-xs tw-uppercase tw-font-bold text-secondary">
+        Salons textuels
+        {% if proprietaire %}
+            <a href="{{ path('app_salon_nouveau', {id: serveur.id}) }}" class="text-secondary" title="Créer un salon"><i class="bi bi-plus-lg"></i></a>
+        {% endif %}
+    </div>
+
+    {% for s in serveur.salons %}
+        <div class="tw-group tw-flex tw-items-center">
+            <a href="{{ path('app_salon_voir', {id: s.id}) }}"
+               class="lien-sidebar tw-flex-1 tw-min-w-0 {{ salon is defined and salon.id == s.id ? 'actif' }}">
+                <i class="bi bi-hash tw-text-lg"></i>
+                <span class="text-truncate">{{ s.nom }}</span>
+            </a>
+            {# Renommer / supprimer le salon : propriétaire seulement, visible au survol #}
+            {% if proprietaire %}
+                <div class="tw-hidden group-hover:tw-flex">
+                    <a href="{{ path('app_salon_modifier', {id: s.id}) }}" class="btn btn-sm text-secondary tw-px-1" title="Renommer"><i class="bi bi-pencil"></i></a>
+                    <form method="post" action="{{ path('app_salon_supprimer', {id: s.id}) }}"
+                          onsubmit="return confirm('Supprimer #{{ s.nom|e('js') }} et ses messages ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('salon') }}">
+                        <button type="submit" class="btn btn-sm text-secondary tw-px-1" title="Supprimer"><i class="bi bi-trash"></i></button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <p class="tw-text-sm text-secondary tw-px-2">Aucun salon.</p>
+    {% endfor %}
+</div>
