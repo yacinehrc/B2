@@ -167,46 +167,46 @@ Tous ces comptes ont le mot de passe **`motdepasse`** :
 
 ```
 y-messages/
-├── compose.yaml              # Docker : MySQL + phpMyAdmin
-├── .env                      # Configuration (adresse de la base de données)
-├── database/                 # Scripts SQL exécutés par Docker au 1er lancement
-│   ├── 01_schema.sql         #   création des tables
-│   └── 02_donnees_demo.sql   #   comptes et messages de test
+├── compose.yaml                       → Docker : MySQL + phpMyAdmin
+├── .env                               → Configuration (adresse de la base de données)
+├── database/                          → Scripts SQL exécutés par Docker au 1er lancement
+│   ├── 01_schema.sql                  → création des tables
+│   └── 02_donnees_demo.sql            → comptes et messages de test
 ├── config/
 │   └── packages/
-│       ├── security.yaml     # Connexion, déconnexion, pages protégées
-│       ├── doctrine.yaml     # Configuration de la base
-│       └── twig.yaml         # Thème Bootstrap pour les formulaires
-├── public/                   # Seul dossier accessible depuis le navigateur
-│   ├── css/app.css           # Couleurs Discord + quelques classes maison
-│   ├── js/chat.js            # Rafraîchissement automatique des messages
-│   └── uploads/avatars/      # Images de profil envoyées
+│       ├── security.yaml              → Connexion, déconnexion, pages protégées
+│       ├── doctrine.yaml              → Configuration de la base
+│       └── twig.yaml                  → Thème Bootstrap pour les formulaires
+├── public/                            → Seul dossier accessible depuis le navigateur
+│   ├── css/app.css                    → Couleurs Discord + quelques classes maison
+│   ├── js/chat.js                     → Rafraîchissement automatique des messages
+│   └── uploads/avatars/               → Images de profil envoyées
 ├── src/
-│   ├── Controller/           # Reçoivent les requêtes et renvoient les pages
-│   │   ├── SecurityController.php     # /connexion, /deconnexion
-│   │   ├── InscriptionController.php  # /inscription
-│   │   ├── ContactController.php      # / (amis), demandes d'ami
-│   │   ├── DiscussionController.php   # MP et groupes
-│   │   ├── ServeurController.php      # serveurs et membres
-│   │   ├── SalonController.php        # salons
-│   │   ├── MessageController.php      # modifier / supprimer un message
-│   │   └── ProfilController.php       # profil, avatar, suppression du compte
-│   ├── Entity/               # Les classes PHP = les tables de la base
+│   ├── Controller/                    → Reçoivent les requêtes et renvoient les pages
+│   │   ├── SecurityController.php     → /connexion, /deconnexion
+│   │   ├── InscriptionController.php  → /inscription
+│   │   ├── ContactController.php      → / (amis), demandes d'ami
+│   │   ├── DiscussionController.php   → MP et groupes
+│   │   ├── ServeurController.php      → serveurs et membres
+│   │   ├── SalonController.php        → salons
+│   │   ├── MessageController.php      → modifier / supprimer un message
+│   │   └── ProfilController.php       → profil, avatar, suppression du compte
+│   ├── Entity/                        → Les classes PHP = les tables de la base
 │   │   ├── Utilisateur.php, Contact.php, Discussion.php
 │   │   └── Serveur.php, Salon.php, Message.php
-│   ├── Form/                 # Les formulaires Symfony
+│   ├── Form/                          → Les formulaires Symfony
 │   │   ├── InscriptionType.php, ProfilType.php, MessageType.php
 │   │   └── NomType.php, NouvelleDiscussionType.php
-│   ├── Repository/           # Les requêtes vers la base (une classe par entité)
+│   ├── Repository/                    → Les requêtes vers la base (une classe par entité)
 │   └── Service/
-│       └── GenerateurIdentifiant.php  # Fabrique "a_mar" à partir du prénom et du nom
-└── templates/                # Les pages HTML (Twig)
-    ├── base.html.twig        # Squelette HTML + Bootstrap + Tailwind
-    ├── layout_app.html.twig  # Mise en page Discord (4 colonnes, tiroirs sur téléphone)
-    ├── _partials/            # Morceaux réutilisés (avatar, chat, barres latérales...)
-    ├── security/             # Connexion et inscription
-    ├── contact/              # Page Amis
-    ├── discussion/, salon/, serveur/, message/, profil/
+│       └── GenerateurIdentifiant.php  → Fabrique "a_mar" à partir du prénom et du nom
+└── templates/                         → Les pages HTML (Twig)
+    ├── base.html.twig                 → Squelette HTML + Bootstrap + Tailwind
+    ├── layout_app.html.twig           → Mise en page Discord (4 colonnes, tiroirs sur téléphone)
+    ├── _partials/                     → Morceaux réutilisés (avatar, chat, barres latérales...)
+    ├── security/                      → Connexion et inscription
+    ├── contact/                       → Page Amis
+    └── discussion/, salon/, serveur/, message/, profil/
 ```
 
 ---

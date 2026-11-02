@@ -302,19 +302,19 @@ Pour tester l'affichage en direct, il suffit d'ouvrir deux navigateurs connecté
 ```
 02 - Y - Messages/
 ├── README.md
-├── Images/                  # Captures d'écran du README
-└── Code/                    # Projet Symfony
-    ├── compose.yaml         # MySQL + phpMyAdmin (Docker)
-    ├── database/            # Scripts SQL : tables et données de démo
-    ├── config/              # Configuration (sécurité, Doctrine, Twig...)
-    ├── public/              # CSS, JavaScript de l'auto-refresh, avatars
+├── Images/           → Captures d'écran du README
+└── Code/             → Projet Symfony
+    ├── compose.yaml  → MySQL + phpMyAdmin (Docker)
+    ├── database/     → Scripts SQL : tables et données de démo
+    ├── config/       → Configuration (sécurité, Doctrine, Twig...)
+    ├── public/       → CSS, JavaScript de l'auto-refresh, avatars
     ├── src/
     │   ├── Controller/
     │   ├── Entity/
     │   ├── Form/
     │   ├── Repository/
     │   └── Service/
-    └── templates/           # Vues Twig
+    └── templates/    → Vues Twig
 ```
 
 ---
