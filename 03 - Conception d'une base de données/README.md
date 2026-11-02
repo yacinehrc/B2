@@ -2,7 +2,7 @@
 
 ![Test d'une transaction dans SQL Server Management Studio](./Images/TP1/Ex1_Inventaire/04_Stock_insuffisant.png)
 
-> Travaux pratiques de 2ème année à l'EPSI Lille sur **SQL Server** : transactions et gestion des erreurs, procédures stockées, fonctions, curseurs et triggers. Chaque script est fourni avec la capture de son exécution dans **SQL Server Management Studio**.
+> Travaux pratiques de 2ème année sur **SQL Server** : transactions et gestion des erreurs, procédures stockées, fonctions, curseurs et triggers. Chaque script est fourni avec la capture de son exécution dans **SQL Server Management Studio**.
 
 ---
 
