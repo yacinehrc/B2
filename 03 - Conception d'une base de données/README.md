@@ -1,5 +1,7 @@
 # Conception et exploitation d'une base de données
 
+![Test d'une transaction dans SQL Server Management Studio](./Images/TP1/Ex1_Inventaire/04_Stock_insuffisant.png)
+
 > Travaux pratiques de 2ème année à l'EPSI Lille sur **SQL Server** : transactions et gestion des erreurs, procédures stockées, fonctions, curseurs et triggers. Chaque script est fourni avec la capture de son exécution dans **SQL Server Management Studio**.
 
 ---
@@ -20,11 +22,11 @@
 
 Ce dépôt regroupe trois TP du module *Conception et exploitation d'une base de données*. Ils ne se limitent pas aux cas qui fonctionnent : chaque traitement est aussi testé avec des erreurs, pour vérifier l'état de la base après l'échec.
 
-| TP | Sujet | Bases | Scripts |
-| --- | --- | --- | --- |
-| **TP1** | Transactions, `TRY...CATCH`, `COMMIT`, `ROLLBACK` | `TP1_Ex1` à `TP1_Ex5` | 26 |
-| **TP2** | Procédures stockées, paramètres `OUTPUT`, `THROW` | `TP2` | 22 |
-| **TP3** | Fonctions scalaires et table, curseur, triggers | `TP3` | 23 |
+| TP | Sujet | Bases | Scripts | Document |
+| --- | --- | --- | --- | --- |
+| **TP1** | Transactions, `TRY...CATCH`, `COMMIT`, `ROLLBACK` | `TP1_Ex1` à `TP1_Ex5` | 26 | [PDF](Documents/TP1%20-%20Transaction%20et%20gestion%20des%20erreurs.pdf) |
+| **TP2** | Procédures stockées, paramètres `OUTPUT`, `THROW` | `TP2` | 22 | [PDF](Documents/TP2%20-%20Les%20proc%C3%A9dures.pdf) |
+| **TP3** | Fonctions scalaires et table, curseur, triggers | `TP3` | 23 | [PDF](Documents/TP3%20-%20Fonctions,%20curseurs%20et%20triggers.pdf) |
 
 Le code des transactions du TP1 reprend le corrigé fourni en cours ; les jeux de tests sont ajoutés. Les TP2 et TP3 n'ont pas de corrigé : ils sont réalisés à partir de l'énoncé, avec le code le plus simple possible.
 
@@ -670,6 +672,10 @@ Le trigger joint `deleted` et `inserted` : il gère donc plusieurs lignes, et n'
 ```
 03 - Conception d'une base de données/
 ├── README.md
+├── Documents/
+│   ├── TP1 - Transaction et gestion des erreurs.pdf
+│   ├── TP2 - Les procédures.pdf
+│   └── TP3 - Fonctions, curseurs et triggers.pdf
 ├── SQL/
 │   ├── TP1/
 │   │   ├── Ex1_Inventaire/
