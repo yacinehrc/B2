@@ -96,7 +96,7 @@ docker --version
 
 ## 4. Installation pas à pas
 
-Toutes les commandes se lancent **dans le dossier du projet** (`y-messages`).
+Toutes les commandes se lancent **dans le dossier du projet**, celui qui contient `composer.json` (le dossier `Code/` si tu as récupéré le dépôt GitHub).
 
 **1. Installer les dépendances PHP** (dossier `vendor/`) :
 
@@ -302,6 +302,7 @@ Pour voir toutes les routes : `php bin/console debug:router`
 | `An exception occurred in the driver: SQLSTATE[HY000] [2002]` | MySQL n'est pas lancé : démarre Docker Desktop puis `docker compose up -d`. |
 | `docker: failed to connect to the docker API` | Docker Desktop n'est pas démarré, ou démarre encore : attends que la baleine soit verte. |
 | `port is already allocated` (3306 ou 8081) | Un autre MySQL (XAMPP, WAMP...) utilise déjà ce port : arrête-le, ou change `"3306:3306"` en `"3307:3306"` dans `compose.yaml` et `127.0.0.1:3306` en `127.0.0.1:3307` dans `.env`. |
+| `could not find driver` | L'extension MySQL de PHP n'est pas activée : dans `php.ini` (chemin donné par `php --ini`), retire le `;` devant `extension=pdo_mysql`, puis relance le serveur. Même chose pour `intl` et `mbstring` si Composer les réclame. |
 | Les comptes de démo n'existent pas | Les scripts SQL ne s'exécutent qu'au **premier** démarrage. Remets la base à zéro : `docker compose down -v` puis `docker compose up -d`. |
 | `Table ... doesn't exist` | Même solution que ci-dessus. |
 | Le style ne s'affiche pas | Bootstrap et Tailwind viennent d'Internet (CDN) : vérifie ta connexion. |

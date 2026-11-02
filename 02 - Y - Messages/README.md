@@ -215,18 +215,70 @@ Les scripts de création et les données de démonstration se trouvent dans [`Co
 
 ## Installation
 
-Prérequis : PHP 8.4, Composer, Symfony CLI et Docker Desktop.
+### Prérequis
+
+| Outil | Rôle | Vérification |
+|---|---|---|
+| [PHP 8.4](https://windows.php.net/download/) | Langage du projet, avec les extensions `pdo_mysql`, `intl` et `mbstring` | `php -v` |
+| [Composer](https://getcomposer.org/download/) | Installe les bibliothèques PHP (Symfony, Doctrine...) | `composer -V` |
+| [Symfony CLI](https://symfony.com/download) | Lance le serveur web local | `symfony version` |
+| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | Fait tourner MySQL et phpMyAdmin sans les installer | `docker --version` |
+| [Git](https://git-scm.com/downloads) *(facultatif)* | Récupère le dépôt | `git --version` |
+
+### Lancer le projet
+
+**1. Récupérer le projet**, avec Git ou en téléchargeant le ZIP du dépôt (bouton *Code* → *Download ZIP*) :
 
 ```bash
-cd Code
+git clone https://github.com/yacinehrc/B2.git
+```
+
+**2. Se placer dans le dossier de l'application.** Les guillemets sont nécessaires à cause des espaces dans le nom :
+
+```bash
+cd "B2/02 - Y - Messages/Code"
+```
+
+**3. Installer les dépendances PHP.** Composer crée le dossier `vendor/` :
+
+```bash
 composer install
+```
+
+**4. Démarrer la base de données.** Ouvrir d'abord Docker Desktop et attendre l'indication *Engine running*, puis :
+
+```bash
 docker compose up -d
+```
+
+Au premier lancement, Docker télécharge MySQL puis exécute les scripts de [`Code/database/`](./Code/database/), qui créent les tables et ajoutent les données de démonstration. Il faut compter une à deux minutes.
+
+**5. Vérifier la connexion à la base.** Les deux lignes doivent afficher `[OK]` ; si ce n'est pas le cas, MySQL est encore en train de démarrer : patienter quelques secondes puis relancer.
+
+```bash
+php bin/console doctrine:schema:validate
+```
+
+**6. Démarrer le serveur web :**
+
+```bash
 symfony serve -d
 ```
 
-L'application est ensuite disponible sur <http://127.0.0.1:8000>, et phpMyAdmin sur <http://localhost:8081>. Au premier lancement, Docker crée automatiquement les tables et les données de démonstration.
+**7. Ouvrir l'application** sur <http://127.0.0.1:8000> et se connecter avec un [compte de test](#identifiants-de-test), par exemple `a_mar` / `motdepasse`. Si le port 8000 est déjà utilisé, Symfony en choisit un autre et affiche la bonne adresse.
 
-Le détail de l'installation, des commandes utiles et du dépannage se trouve dans [`Code/README.md`](./Code/README.md).
+La base de données peut être consultée avec phpMyAdmin sur <http://localhost:8081> (utilisateur `ymessages`, mot de passe `ymessages`).
+
+### Commandes utiles
+
+| Action | Commande |
+|---|---|
+| Arrêter le serveur web | `symfony server:stop` |
+| Arrêter la base (les données sont conservées) | `docker compose stop` |
+| Relancer le projet plus tard | `docker compose up -d` puis `symfony serve -d` |
+| Remettre la base à zéro avec les données de démonstration | `docker compose down -v` puis `docker compose up -d` |
+
+Le guide technique [`Code/README.md`](./Code/README.md) détaille la structure du code, les routes et les solutions aux problèmes courants (port occupé, Docker qui ne démarre pas, extension PHP manquante...).
 
 ---
 
