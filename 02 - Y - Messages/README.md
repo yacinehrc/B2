@@ -346,8 +346,8 @@ Pour tester l'affichage en direct, il suffit d'ouvrir deux navigateurs connecté
 
 Ce projet m'a permis de découvrir le framework Symfony en construisant une application complète, de la base de données à l'interface. Il m'a fait travailler :
 
-- la modélisation des données (MCD, relations un-à-plusieurs et plusieurs-à-plusieurs) et leur traduction en entités Doctrine ;
-- l'organisation d'une application en MVC avec des contrôleurs, des formulaires et des templates réutilisables ;
+- la modélisation des données et leur traduction en entités Doctrine ;
+- l'organisation d'une application en MVC ;
 - la sécurité web : authentification, hachage des mots de passe, contrôle des droits et protections CSRF et XSS ;
 - la mise en place d'un environnement de développement avec Docker ;
 - la gestion d'un affichage dynamique en JavaScript.
