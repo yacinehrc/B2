@@ -338,7 +338,7 @@ Pour tester l'affichage en direct, il suffit d'ouvrir deux navigateurs connecté
 - **Messages enrichis** : images, fichiers joints, réactions et réponses à un message
 - **Pagination** : chargement progressif des anciens messages
 - **Qualité** : tests automatisés avec PHPUnit et centralisation des droits dans des Voters Symfony
-- **Application installable** : transformer le site en PWA avec des notifications de nouveaux messages
+- **Application installable** : transformer le site en application mobile avec des notifications de nouveaux messages
 
 ---
 
