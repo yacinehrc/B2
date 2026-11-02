@@ -43,6 +43,7 @@ Le projet couvre un **CRUD complet** sur six entités (utilisateurs, contacts, d
 - **Serveurs et salons** : création d'un serveur avec un salon `#général`, ajout de salons, invitation et retrait de membres, gestion réservée au propriétaire
 - **Messages** : envoi, modification (avec la mention « modifié ») et suppression de ses propres messages
 - **Affichage en direct** : les nouveaux messages apparaissent sans recharger la page grâce à un rafraîchissement automatique toutes les 3 secondes
+- **Interface responsive** : quatre colonnes sur ordinateur, menus repliés dans des tiroirs sur tablette et téléphone
 
 ---
 
@@ -54,8 +55,8 @@ Le projet couvre un **CRUD complet** sur six entités (utilisateurs, contacts, d
 | **Doctrine ORM** | Lien entre les classes PHP (entités) et les tables MySQL |
 | **Twig** | Moteur de templates pour générer les pages HTML |
 | **MySQL 8.4** + **phpMyAdmin** | Base de données et interface d'administration, lancées avec **Docker Compose** |
-| **Bootstrap 5.3** | Composants d'interface : boutons, formulaires, alertes, menus déroulants |
-| **Tailwind CSS 3** | Mise en page et couleurs, avec le préfixe `tw-` pour cohabiter avec Bootstrap |
+| **Bootstrap 5.3** | Composants d'interface : boutons, formulaires, alertes, menus déroulants, tiroirs (offcanvas) sur petit écran |
+| **Tailwind CSS 3** | Mise en page responsive et couleurs, avec le préfixe `tw-` pour cohabiter avec Bootstrap |
 | **JavaScript** | Rafraîchissement automatique des messages avec `fetch()` |
 
 ---
@@ -107,6 +108,18 @@ Le menu du serveur permet au propriétaire de créer un salon, de renommer le se
 Le profil affiche l'avatar, l'identifiant, la bio et la date d'inscription. Depuis un autre profil, un bouton permet d'envoyer directement un message.
 
 ![Profil utilisateur](./Images/profil.png)
+
+### Version mobile
+
+L'interface s'adapte à la largeur de l'écran. Sur téléphone, seule la conversation reste affichée : le bouton ☰ ouvre la liste des serveurs et des discussions, et le bouton des membres ouvre la colonne de droite. Ces tiroirs reposent sur le composant *offcanvas* de Bootstrap. Les actions qui n'apparaissent qu'au survol sur ordinateur restent visibles au doigt.
+
+<p align="center">
+  <img src="./Images/mobile-discussion.png" alt="Discussion sur téléphone" width="250">
+  &nbsp;
+  <img src="./Images/mobile-menu.png" alt="Menu ouvert sur téléphone" width="250">
+  &nbsp;
+  <img src="./Images/mobile-membres.png" alt="Membres d'un serveur sur téléphone" width="250">
+</p>
 
 ---
 
@@ -259,6 +272,7 @@ Pour tester l'affichage en direct, il suffit d'ouvrir deux navigateurs connecté
 - **Faire cohabiter Bootstrap et Tailwind** : les deux frameworks utilisent des noms de classes proches. Tailwind a été configuré avec le préfixe `tw-` et sans sa réinitialisation CSS, ce qui permet d'utiliser Bootstrap pour les composants et Tailwind pour la mise en page.
 - **Effet de bord de l'auto-refresh** : après une déconnexion, les requêtes automatiques étaient mémorisées par Symfony comme « page à ouvrir après connexion », et l'utilisateur arrivait sur une page incomplète. Le problème a été corrigé en marquant ces requêtes comme AJAX (`X-Requested-With`).
 - **Modification de l'identifiant** : une saisie invalide restait en mémoire et Symfony déconnectait l'utilisateur, croyant que son identifiant avait changé. L'entité est maintenant rechargée depuis la base en cas d'erreur.
+- **Adapter quatre colonnes à un téléphone** : sur un écran de 375 px, les deux barres de gauche prenaient presque toute la largeur. Elles sont devenues des tiroirs Bootstrap (`offcanvas-md` et `offcanvas-lg`), affichés normalement sur grand écran et repliés derrière un bouton en dessous. Les boutons visibles seulement au survol ont aussi été rendus accessibles sur écran tactile.
 - **Environnement Docker** : sous Windows, Docker Desktop refusait de démarrer à cause d'anciens fichiers socket impossibles à supprimer. La solution est documentée dans le guide d'installation.
 
 ---
@@ -272,7 +286,7 @@ Pour tester l'affichage en direct, il suffit d'ouvrir deux navigateurs connecté
 - **Messages enrichis** : images, fichiers joints, réactions et réponses à un message
 - **Pagination** : chargement progressif des anciens messages
 - **Qualité** : tests automatisés avec PHPUnit et centralisation des droits dans des Voters Symfony
-- **Version mobile** : interface adaptée aux petits écrans
+- **Application installable** : transformer le site en PWA avec des notifications de nouveaux messages
 
 ---
 

@@ -34,6 +34,13 @@
     --bs-card-border-color: #1e1f22;
 }
 
+/* Tiroirs du téléphone (offcanvas) : largeur de leur contenu au lieu des 400px de Bootstrap */
+.offcanvas-md,
+.offcanvas-lg {
+    --bs-offcanvas-width: auto;
+    --bs-offcanvas-bg: #2b2d31;
+}
+
 /* Bulle ronde d'un serveur, qui devient un carré arrondi au survol */
 .bulle-serveur {
     width: 48px;

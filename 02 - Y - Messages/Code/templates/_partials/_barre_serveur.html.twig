@@ -48,9 +48,9 @@
                 <i class="bi bi-hash tw-text-lg"></i>
                 <span class="text-truncate">{{ s.nom }}</span>
             </a>
-            {# Renommer / supprimer le salon : propriétaire seulement, visible au survol #}
+            {# Renommer / supprimer le salon : propriétaire seulement, au survol sur grand écran (pas de survol au doigt) #}
             {% if proprietaire %}
-                <div class="tw-hidden group-hover:tw-flex">
+                <div class="tw-flex lg:tw-hidden lg:group-hover:tw-flex">
                     <a href="{{ path('app_salon_modifier', {id: s.id}) }}" class="btn btn-sm text-secondary tw-px-1" title="Renommer"><i class="bi bi-pencil"></i></a>
                     <form method="post" action="{{ path('app_salon_supprimer', {id: s.id}) }}"
                           onsubmit="return confirm('Supprimer #{{ s.nom|e('js') }} et ses messages ?');">

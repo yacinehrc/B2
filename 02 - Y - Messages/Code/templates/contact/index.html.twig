@@ -3,21 +3,22 @@
 
 {% block title %}Amis - Y - Messages{% endblock %}
 
+{% block entete %}
+    <i class="bi bi-people-fill text-secondary"></i>
+    <strong class="text-white">Amis</strong>
+    <a href="{{ path('app_discussion_nouvelle') }}" class="btn btn-sm btn-success tw-ml-auto" title="Nouvelle discussion">
+        <i class="bi bi-chat-dots-fill"></i><span class="d-none d-sm-inline"> Nouvelle discussion</span>
+    </a>
+{% endblock %}
+
 {% block contenu %}
-    <header class="tw-h-12 tw-shrink-0 tw-flex tw-items-center tw-gap-3 tw-px-4 tw-border-b tw-border-black/30 tw-shadow-sm">
-        <i class="bi bi-people-fill text-secondary"></i>
-        <strong class="text-white">Amis</strong>
-        <a href="{{ path('app_discussion_nouvelle') }}" class="btn btn-sm btn-success tw-ml-auto">
-            <i class="bi bi-chat-dots-fill"></i> Nouvelle discussion
-        </a>
-    </header>
+    {# Moins de marge sur téléphone (p-4), plus à partir de "md" (p-6) #}
+    <div class="tw-flex-1 tw-overflow-y-auto tw-p-4 md:tw-p-6 tw-max-w-3xl">
 
-    <div class="tw-flex-1 tw-overflow-y-auto tw-p-6 tw-max-w-3xl">
-
-        {# Ajouter un ami #}
+        {# Ajouter un ami : champ et bouton l'un sous l'autre sur téléphone, côte à côte à partir de "sm" #}
         <h2 class="h6 tw-uppercase tw-font-bold">Ajouter un ami</h2>
         <p class="text-secondary tw-text-sm">Tu peux ajouter un ami grâce à son identifiant (par exemple <code>a_mar</code>).</p>
-        <form method="post" action="{{ path('app_contact_ajouter') }}" class="tw-flex tw-gap-2 tw-mb-8">
+        <form method="post" action="{{ path('app_contact_ajouter') }}" class="tw-flex tw-flex-col sm:tw-flex-row tw-gap-2 tw-mb-8">
             {# Le jeton CSRF prouve que le formulaire vient bien de notre site #}
             <input type="hidden" name="_token" value="{{ csrf_token('contact') }}">
             <input type="text" name="identifiant" class="form-control" placeholder="Identifiant de ton ami" required>
@@ -29,19 +30,19 @@
             <h2 class="h6 tw-uppercase tw-font-bold text-secondary">Demandes reçues — {{ demandesRecues|length }}</h2>
             <ul class="list-group tw-mb-8">
                 {% for contact in demandesRecues %}
-                    <li class="list-group-item tw-flex tw-items-center tw-gap-3 tw-bg-discord-800">
+                    <li class="list-group-item tw-flex tw-items-center tw-gap-2 sm:tw-gap-3 tw-bg-discord-800">
                         {% include '_partials/_avatar.html.twig' with {utilisateur: contact.demandeur} %}
-                        <div class="tw-flex-1">
-                            <div class="text-white tw-font-semibold">{{ contact.demandeur.nomComplet }}</div>
+                        <div class="tw-flex-1 tw-min-w-0">
+                            <div class="text-white tw-font-semibold text-truncate">{{ contact.demandeur.nomComplet }}</div>
                             <small class="text-secondary">{{ contact.demandeur.identifiant }}</small>
                         </div>
                         <form method="post" action="{{ path('app_contact_accepter', {id: contact.id}) }}">
                             <input type="hidden" name="_token" value="{{ csrf_token('contact') }}">
-                            <button type="submit" class="btn btn-sm btn-success" title="Accepter"><i class="bi bi-check-lg"></i> Accepter</button>
+                            <button type="submit" class="btn btn-sm btn-success" title="Accepter"><i class="bi bi-check-lg"></i><span class="d-none d-sm-inline"> Accepter</span></button>
                         </form>
                         <form method="post" action="{{ path('app_contact_supprimer', {id: contact.id}) }}">
                             <input type="hidden" name="_token" value="{{ csrf_token('contact') }}">
-                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Refuser"><i class="bi bi-x-lg"></i> Refuser</button>
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Refuser"><i class="bi bi-x-lg"></i><span class="d-none d-sm-inline"> Refuser</span></button>
                         </form>
                     </li>
                 {% endfor %}
@@ -53,10 +54,10 @@
             <h2 class="h6 tw-uppercase tw-font-bold text-secondary">Demandes envoyées — {{ demandesEnvoyees|length }}</h2>
             <ul class="list-group tw-mb-8">
                 {% for contact in demandesEnvoyees %}
-                    <li class="list-group-item tw-flex tw-items-center tw-gap-3 tw-bg-discord-800">
+                    <li class="list-group-item tw-flex tw-items-center tw-gap-2 sm:tw-gap-3 tw-bg-discord-800">
                         {% include '_partials/_avatar.html.twig' with {utilisateur: contact.destinataire} %}
-                        <div class="tw-flex-1">
-                            <div class="text-white tw-font-semibold">{{ contact.destinataire.nomComplet }}</div>
+                        <div class="tw-flex-1 tw-min-w-0">
+                            <div class="text-white tw-font-semibold text-truncate">{{ contact.destinataire.nomComplet }}</div>
                             <small class="text-secondary">En attente de réponse...</small>
                         </div>
                         <form method="post" action="{{ path('app_contact_supprimer', {id: contact.id}) }}">
@@ -73,14 +74,14 @@
         <ul class="list-group">
             {% for contact in amis %}
                 {% set ami = contact.autre(app.user) %}
-                <li class="list-group-item tw-flex tw-items-center tw-gap-3 tw-bg-discord-800">
+                <li class="list-group-item tw-flex tw-items-center tw-gap-2 sm:tw-gap-3 tw-bg-discord-800">
                     {% include '_partials/_avatar.html.twig' with {utilisateur: ami} %}
-                    <a href="{{ path('app_profil_voir', {id: ami.id}) }}" class="tw-flex-1 text-decoration-none">
-                        <div class="text-white tw-font-semibold">{{ ami.nomComplet }}</div>
+                    <a href="{{ path('app_profil_voir', {id: ami.id}) }}" class="tw-flex-1 tw-min-w-0 text-decoration-none">
+                        <div class="text-white tw-font-semibold text-truncate">{{ ami.nomComplet }}</div>
                         <small class="text-secondary">{{ ami.identifiant }}</small>
                     </a>
                     <a href="{{ path('app_discussion_mp', {id: ami.id}) }}" class="btn btn-sm btn-primary" title="Envoyer un message">
-                        <i class="bi bi-chat-fill"></i> Message
+                        <i class="bi bi-chat-fill"></i><span class="d-none d-sm-inline"> Message</span>
                     </a>
                     <form method="post" action="{{ path('app_contact_supprimer', {id: contact.id}) }}"
                           onsubmit="return confirm('Retirer {{ ami.prenom|e('js') }} de tes amis ?');">

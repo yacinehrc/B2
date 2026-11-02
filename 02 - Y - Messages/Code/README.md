@@ -35,6 +35,7 @@ Ce guide détaille l'installation, la structure du code et le dépannage. La pr�
 | **Salons** | Créer, renommer et supprimer des salons dans un serveur | C / R / U / D |
 | **Messages** | Envoyer, modifier (affiche « (modifié) ») et supprimer ses messages | C / R / U / D |
 | **Temps réel** | Les nouveaux messages apparaissent tout seuls (rafraîchissement toutes les 3 s) | – |
+| **Responsive** | Utilisable sur ordinateur, tablette et téléphone (voir ci-dessous) | – |
 
 Sécurité : toutes les pages demandent d'être connecté (sauf connexion et inscription). Les mots de passe sont hashés et les formulaires protégés contre le CSRF. On ne peut voir que les discussions et serveurs dont on est membre.
 
@@ -49,11 +50,21 @@ Sécurité : toutes les pages demandent d'être connecté (sauf connexion et ins
 | **Twig** | Moteur de templates (les pages HTML) |
 | **MySQL 8.4** (via **Docker**) | Base de données |
 | **phpMyAdmin** (via Docker) | Interface web pour voir la base |
-| **Bootstrap 5.3** | Composants : boutons, formulaires, alertes, menus |
-| **Tailwind CSS 3** | Mise en page et couleurs (classes préfixées `tw-`) |
+| **Bootstrap 5.3** | Composants : boutons, formulaires, alertes, menus, tiroirs (offcanvas) du mode téléphone |
+| **Tailwind CSS 3** | Mise en page et couleurs (classes préfixées `tw-`), variantes `sm:` / `md:` / `lg:` pour le responsive |
 | **JavaScript** (sans framework) | Rafraîchissement automatique des messages |
 
 Bootstrap et Tailwind sont chargés par CDN : pas besoin de Node.js ni de npm.
+
+### Affichage selon la taille de l'écran
+
+| Écran | Largeur | Affichage |
+|---|---|---|
+| **Ordinateur** | 992 px et plus | Les 4 colonnes façon Discord : serveurs, barre latérale, conversation, membres |
+| **Tablette** | 768 à 991 px | Serveurs, barre latérale et conversation ; les membres s'ouvrent avec le bouton <i>membres</i> de l'en-tête |
+| **Téléphone** | moins de 768 px | Seule la conversation est affichée ; le bouton ☰ ouvre les serveurs et les discussions dans un tiroir |
+
+Sur écran tactile, les boutons qui n'apparaissent qu'au survol sur ordinateur (modifier un message, gérer un salon, retirer un membre) restent toujours visibles, puisqu'on ne peut pas survoler avec le doigt.
 
 ---
 
@@ -191,7 +202,7 @@ y-messages/
 │       └── GenerateurIdentifiant.php  # Fabrique "y_har" à partir du prénom et du nom
 └── templates/                # Les pages HTML (Twig)
     ├── base.html.twig        # Squelette HTML + Bootstrap + Tailwind
-    ├── layout_app.html.twig  # Mise en page Discord (4 colonnes)
+    ├── layout_app.html.twig  # Mise en page Discord (4 colonnes, tiroirs sur téléphone)
     ├── _partials/            # Morceaux réutilisés (avatar, chat, barres latérales...)
     ├── security/             # Connexion et inscription
     ├── contact/              # Page Amis
@@ -316,7 +327,7 @@ Le projet couvre l'essentiel de Discord, mais plusieurs évolutions permettraien
 | **Messages enrichis** | Messages en texte brut uniquement. | Images et fichiers joints, réactions emoji, réponses à un message, mentions `@identifiant`. |
 | **Présence** | On ne sait pas qui est connecté. | Statut « en ligne / absent » et indicateur « est en train d'écrire ». |
 | **Recherche et blocage** | Pas de recherche dans l'historique, pas de protection contre un utilisateur gênant. | Recherche `LIKE` (ou index plein texte) et liste d'utilisateurs bloqués. |
-| **Version mobile** | L'interface est pensée pour un écran d'ordinateur. | Barres latérales repliables en menu sur petit écran. |
+| **Application mobile** | Le site est responsive, mais il faut l'ouvrir dans le navigateur et il ne prévient pas des nouveaux messages. | En faire une PWA (installable sur l'écran d'accueil) avec des notifications push. |
 
 ### Qualité et sécurité
 

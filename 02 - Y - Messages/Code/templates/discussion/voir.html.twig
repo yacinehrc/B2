@@ -5,32 +5,36 @@
 
 {% block title %}{{ titre }} - Y - Messages{% endblock %}
 
-{% block contenu %}
-    {# En-tête #}
-    <header class="tw-h-12 tw-shrink-0 tw-flex tw-items-center tw-gap-2 tw-px-4 tw-border-b tw-border-black/30 tw-shadow-sm">
+{% block entete %}
+    {% if discussion.estUnGroupe %}
+        <i class="bi bi-people-fill text-secondary"></i>
+    {% else %}
+        <span class="text-secondary tw-text-xl">@</span>
+    {% endif %}
+    <strong class="text-white text-truncate">{{ titre }}</strong>
+
+    {# Sur téléphone on ne garde que les icônes, le texte des boutons s'affiche à partir de "sm" #}
+    <div class="tw-ml-auto tw-flex tw-gap-2 tw-shrink-0">
         {% if discussion.estUnGroupe %}
-            <i class="bi bi-people-fill text-secondary"></i>
-        {% else %}
-            <span class="text-secondary tw-text-xl">@</span>
+            <a href="{{ path('app_discussion_modifier', {id: discussion.id}) }}" class="btn btn-sm btn-outline-secondary" title="Renommer">
+                <i class="bi bi-pencil"></i><span class="d-none d-sm-inline"> Renommer</span>
+            </a>
         {% endif %}
-        <strong class="text-white">{{ titre }}</strong>
+        <form method="post" action="{{ path('app_discussion_quitter', {id: discussion.id}) }}"
+              onsubmit="return confirm('{{ discussion.estUnGroupe ? 'Quitter ce groupe ?' : 'Supprimer cette discussion et tous ses messages ?' }}');">
+            <input type="hidden" name="_token" value="{{ csrf_token('discussion') }}">
+            <button type="submit" class="btn btn-sm btn-outline-danger" title="{{ discussion.estUnGroupe ? 'Quitter le groupe' : 'Supprimer la discussion' }}">
+                <i class="bi {{ discussion.estUnGroupe ? 'bi-box-arrow-left' : 'bi-trash' }}"></i>
+                <span class="d-none d-sm-inline">{{ discussion.estUnGroupe ? 'Quitter le groupe' : 'Supprimer la discussion' }}</span>
+            </button>
+        </form>
+        {% if discussion.estUnGroupe %}
+            {% include '_partials/_bouton_membres.html.twig' %}
+        {% endif %}
+    </div>
+{% endblock %}
 
-        <div class="tw-ml-auto tw-flex tw-gap-2">
-            {% if discussion.estUnGroupe %}
-                <a href="{{ path('app_discussion_modifier', {id: discussion.id}) }}" class="btn btn-sm btn-outline-secondary">
-                    <i class="bi bi-pencil"></i> Renommer
-                </a>
-            {% endif %}
-            <form method="post" action="{{ path('app_discussion_quitter', {id: discussion.id}) }}"
-                  onsubmit="return confirm('{{ discussion.estUnGroupe ? 'Quitter ce groupe ?' : 'Supprimer cette discussion et tous ses messages ?' }}');">
-                <input type="hidden" name="_token" value="{{ csrf_token('discussion') }}">
-                <button type="submit" class="btn btn-sm btn-outline-danger">
-                    {{ discussion.estUnGroupe ? 'Quitter le groupe' : 'Supprimer la discussion' }}
-                </button>
-            </form>
-        </div>
-    </header>
-
+{% block contenu %}
     {# Messages + champ d'envoi #}
     {% include '_partials/_chat.html.twig' with {
         messages: discussion.messages,
@@ -39,31 +43,33 @@
     } %}
 {% endblock %}
 
-{# Colonne des membres (seulement pour les groupes) #}
+{# Colonne des membres (seulement pour les groupes), en tiroir à droite sur petit écran #}
 {% block colonne_droite %}
     {% if discussion.estUnGroupe %}
-        <aside class="tw-w-60 tw-shrink-0 tw-bg-discord-800 tw-p-3 tw-overflow-y-auto tw-hidden lg:tw-block">
-            <h6 class="tw-text-xs tw-uppercase tw-font-bold text-secondary">Membres — {{ discussion.membres|length }}</h6>
+        <div id="membres" class="offcanvas-lg offcanvas-end tw-flex tw-flex-row tw-shrink-0">
+            <aside class="tw-w-60 tw-bg-discord-800 tw-p-3 tw-overflow-y-auto">
+                <h6 class="tw-text-xs tw-uppercase tw-font-bold text-secondary">Membres — {{ discussion.membres|length }}</h6>
 
-            {% for membre in discussion.membres %}
-                <a href="{{ path('app_profil_voir', {id: membre.id}) }}" class="lien-sidebar">
-                    {% include '_partials/_avatar.html.twig' with {utilisateur: membre, taille: 32} %}
-                    <span class="text-truncate">{{ membre.nomComplet }}</span>
-                </a>
-            {% endfor %}
+                {% for membre in discussion.membres %}
+                    <a href="{{ path('app_profil_voir', {id: membre.id}) }}" class="lien-sidebar">
+                        {% include '_partials/_avatar.html.twig' with {utilisateur: membre, taille: 32} %}
+                        <span class="text-truncate">{{ membre.nomComplet }}</span>
+                    </a>
+                {% endfor %}
 
-            {% if amisAjoutables %}
-                <form method="post" action="{{ path('app_discussion_ajouter_membre', {id: discussion.id}) }}" class="tw-mt-4">
-                    <input type="hidden" name="_token" value="{{ csrf_token('discussion') }}">
-                    <label class="form-label tw-text-xs tw-uppercase tw-font-bold text-secondary">Ajouter un ami</label>
-                    <select name="utilisateur" class="form-select form-select-sm tw-mb-2">
-                        {% for ami in amisAjoutables %}
-                            <option value="{{ ami.id }}">{{ ami.nomComplet }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="submit" class="btn btn-sm btn-primary tw-w-full">Ajouter</button>
-                </form>
-            {% endif %}
-        </aside>
+                {% if amisAjoutables %}
+                    <form method="post" action="{{ path('app_discussion_ajouter_membre', {id: discussion.id}) }}" class="tw-mt-4">
+                        <input type="hidden" name="_token" value="{{ csrf_token('discussion') }}">
+                        <label class="form-label tw-text-xs tw-uppercase tw-font-bold text-secondary">Ajouter un ami</label>
+                        <select name="utilisateur" class="form-select form-select-sm tw-mb-2">
+                            {% for ami in amisAjoutables %}
+                                <option value="{{ ami.id }}">{{ ami.nomComplet }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary tw-w-full">Ajouter</button>
+                    </form>
+                {% endif %}
+            </aside>
+        </div>
     {% endif %}
 {% endblock %}

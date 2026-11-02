@@ -7,6 +7,11 @@
     {% include '_partials/_barre_serveur.html.twig' %}
 {% endblock %}
 
+{% block entete %}
+    <strong class="text-white text-truncate">{{ serveur.nom }}</strong>
+    {% include '_partials/_bouton_membres.html.twig' %}
+{% endblock %}
+
 {% block contenu %}
     <div class="tw-flex-1 tw-flex tw-flex-col tw-items-center tw-justify-center text-secondary">
         <i class="bi bi-hash tw-text-6xl"></i>

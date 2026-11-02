@@ -1,11 +1,11 @@
 {# Incluse dans la page, puis renvoyée seule toutes les 3 s pour l'auto-refresh #}
 {% for message in messages %}
-    {# "tw-group" + "group-hover:" : les boutons n'apparaissent qu'au survol du message #}
+    {# "tw-group" + "lg:group-hover:" : sur grand écran, les boutons n'apparaissent qu'au survol du message #}
     <div class="tw-group tw-flex tw-gap-3 tw-py-1.5 tw-px-2 tw-rounded hover:tw-bg-discord-750">
         {% include '_partials/_avatar.html.twig' with {utilisateur: message.auteur, taille: 40} %}
 
         <div class="tw-min-w-0 tw-flex-1">
-            <div class="tw-flex tw-items-baseline tw-gap-2">
+            <div class="tw-flex tw-flex-wrap tw-items-baseline tw-gap-x-2">
                 <a href="{{ path('app_profil_voir', {id: message.auteur.id}) }}" class="tw-font-semibold text-white text-decoration-none">
                     {{ message.auteur.nomComplet }}
                 </a>
@@ -20,7 +20,7 @@
 
         {# Modifier / supprimer : seulement pour MES messages (on compare les id) #}
         {% if message.auteur.id == app.user.id %}
-            <div class="tw-flex tw-gap-1 tw-items-start tw-opacity-0 group-hover:tw-opacity-100">
+            <div class="tw-flex tw-gap-1 tw-items-start lg:tw-opacity-0 lg:group-hover:tw-opacity-100">
                 <a href="{{ path('app_message_modifier', {id: message.id}) }}" class="btn btn-sm btn-dark" title="Modifier">
                     <i class="bi bi-pencil-fill"></i>
                 </a>

@@ -1,38 +1,42 @@
 {# Membres du serveur, le propriétaire peut inviter ou retirer #}
 {% set proprietaire = serveur.estProprietaire(app.user) %}
 
-<aside class="tw-w-60 tw-shrink-0 tw-bg-discord-800 tw-p-3 tw-overflow-y-auto tw-hidden lg:tw-block">
-    <h6 class="tw-text-xs tw-uppercase tw-font-bold text-secondary">Membres — {{ serveur.membres|length }}</h6>
+{# Colonne à droite sur grand écran, tiroir ouvert par le bouton membres en dessous de "lg" #}
+<div id="membres" class="offcanvas-lg offcanvas-end tw-flex tw-flex-row tw-shrink-0">
+    <aside class="tw-w-60 tw-bg-discord-800 tw-p-3 tw-overflow-y-auto">
+        <h6 class="tw-text-xs tw-uppercase tw-font-bold text-secondary">Membres — {{ serveur.membres|length }}</h6>
 
-    {% for membre in serveur.membres %}
-        <div class="tw-group tw-flex tw-items-center">
-            <a href="{{ path('app_profil_voir', {id: membre.id}) }}" class="lien-sidebar tw-flex-1 tw-min-w-0">
-                {% include '_partials/_avatar.html.twig' with {utilisateur: membre, taille: 32} %}
-                <span class="text-truncate">{{ membre.nomComplet }}</span>
-                {% if serveur.estProprietaire(membre) %}
-                    <i class="bi bi-star-fill tw-text-yellow-400" title="Propriétaire"></i>
+        {% for membre in serveur.membres %}
+            <div class="tw-group tw-flex tw-items-center">
+                <a href="{{ path('app_profil_voir', {id: membre.id}) }}" class="lien-sidebar tw-flex-1 tw-min-w-0">
+                    {% include '_partials/_avatar.html.twig' with {utilisateur: membre, taille: 32} %}
+                    <span class="text-truncate">{{ membre.nomComplet }}</span>
+                    {% if serveur.estProprietaire(membre) %}
+                        <i class="bi bi-star-fill tw-text-yellow-400" title="Propriétaire"></i>
+                    {% endif %}
+                </a>
+                {# Au survol sur grand écran, toujours visible au doigt (pas de survol sur téléphone) #}
+                {% if proprietaire and membre.id != app.user.id %}
+                    <form method="post" action="{{ path('app_serveur_retirer_membre', {id: serveur.id, membreId: membre.id}) }}"
+                          class="lg:tw-hidden lg:group-hover:tw-block" onsubmit="return confirm('Retirer {{ membre.prenom|e('js') }} du serveur ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('serveur') }}">
+                        <button type="submit" class="btn btn-sm text-danger tw-px-1" title="Retirer"><i class="bi bi-x-lg"></i></button>
+                    </form>
                 {% endif %}
-            </a>
-            {% if proprietaire and membre.id != app.user.id %}
-                <form method="post" action="{{ path('app_serveur_retirer_membre', {id: serveur.id, membreId: membre.id}) }}"
-                      class="tw-hidden group-hover:tw-block" onsubmit="return confirm('Retirer {{ membre.prenom|e('js') }} du serveur ?');">
-                    <input type="hidden" name="_token" value="{{ csrf_token('serveur') }}">
-                    <button type="submit" class="btn btn-sm text-danger tw-px-1" title="Retirer"><i class="bi bi-x-lg"></i></button>
-                </form>
-            {% endif %}
-        </div>
-    {% endfor %}
+            </div>
+        {% endfor %}
 
-    {% if proprietaire and amisAjoutables %}
-        <form method="post" action="{{ path('app_serveur_ajouter_membre', {id: serveur.id}) }}" class="tw-mt-4">
-            <input type="hidden" name="_token" value="{{ csrf_token('serveur') }}">
-            <label class="form-label tw-text-xs tw-uppercase tw-font-bold text-secondary">Inviter un ami</label>
-            <select name="utilisateur" class="form-select form-select-sm tw-mb-2">
-                {% for ami in amisAjoutables %}
-                    <option value="{{ ami.id }}">{{ ami.nomComplet }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit" class="btn btn-sm btn-primary tw-w-full">Ajouter au serveur</button>
-        </form>
-    {% endif %}
-</aside>
+        {% if proprietaire and amisAjoutables %}
+            <form method="post" action="{{ path('app_serveur_ajouter_membre', {id: serveur.id}) }}" class="tw-mt-4">
+                <input type="hidden" name="_token" value="{{ csrf_token('serveur') }}">
+                <label class="form-label tw-text-xs tw-uppercase tw-font-bold text-secondary">Inviter un ami</label>
+                <select name="utilisateur" class="form-select form-select-sm tw-mb-2">
+                    {% for ami in amisAjoutables %}
+                        <option value="{{ ami.id }}">{{ ami.nomComplet }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary tw-w-full">Ajouter au serveur</button>
+            </form>
+        {% endif %}
+    </aside>
+</div>
