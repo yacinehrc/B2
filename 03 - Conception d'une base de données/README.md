@@ -693,3 +693,6 @@ Le trigger joint `deleted` et `inserted` : il gère donc plusieurs lignes, et n'
 └── Images/
     └── (même organisation que SQL/ : une capture par script)
 ```
+---
+
+*Réalisé par [Yacine Harrache](https://github.com/yacinehrc) — Étudiant en 2ème année | EPSI Lille*
