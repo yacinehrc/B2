@@ -22,7 +22,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    // Généré à l'inscription (Yacine Harrache -> y_har), ses règles sont dans ProfilType
+    // Généré à l'inscription (Alice Martin -> a_mar), ses règles sont dans ProfilType
     #[ORM\Column(length: 50, unique: true)]
     private ?string $identifiant = null;
 

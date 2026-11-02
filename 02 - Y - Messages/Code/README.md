@@ -26,7 +26,7 @@ Ce guide détaille l'installation, la structure du code et le dépannage. La pr�
 | Domaine | Ce qu'on peut faire | CRUD |
 |---|---|---|
 | **Compte** | Inscription (prénom, nom, mot de passe), connexion, déconnexion | C |
-| **Identifiant** | Créé automatiquement : 1ʳᵉ lettre du prénom + `_` + 3 lettres du nom (Yacine Harrache → `y_har`), modifiable ensuite | C / U |
+| **Identifiant** | Créé automatiquement : 1ʳᵉ lettre du prénom + `_` + 3 lettres du nom (Alice Martin → `a_mar`), modifiable ensuite | C / U |
 | **Profil** | Voir son profil ou celui des autres, modifier son nom, son identifiant, sa bio, son avatar et son mot de passe, supprimer son compte | R / U / D |
 | **Contacts** | Envoyer une demande d'ami par identifiant, accepter, refuser, annuler, retirer un ami | C / R / U / D |
 | **Messages privés** | Discussion à deux avec un ami | C / R / D |
@@ -199,7 +199,7 @@ y-messages/
 │   │   └── NomType.php, NouvelleDiscussionType.php
 │   ├── Repository/           # Les requêtes vers la base (une classe par entité)
 │   └── Service/
-│       └── GenerateurIdentifiant.php  # Fabrique "y_har" à partir du prénom et du nom
+│       └── GenerateurIdentifiant.php  # Fabrique "a_mar" à partir du prénom et du nom
 └── templates/                # Les pages HTML (Twig)
     ├── base.html.twig        # Squelette HTML + Bootstrap + Tailwind
     ├── layout_app.html.twig  # Mise en page Discord (4 colonnes, tiroirs sur téléphone)

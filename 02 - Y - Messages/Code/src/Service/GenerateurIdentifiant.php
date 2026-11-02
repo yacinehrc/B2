@@ -5,7 +5,7 @@ namespace App\Service;
 use App\Repository\UtilisateurRepository;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-// Identifiant par défaut : 1re lettre du prénom + "_" + 3 lettres du nom (Yacine Harrache -> y_har)
+// Identifiant par défaut : 1re lettre du prénom + "_" + 3 lettres du nom (Alice Martin -> a_mar)
 class GenerateurIdentifiant
 {
     public function __construct(
@@ -22,7 +22,7 @@ class GenerateurIdentifiant
 
         $base = substr($prenomPropre, 0, 1).'_'.substr($nomPropre, 0, 3);
 
-        // Déjà pris ? On ajoute un numéro : y_har2, y_har3...
+        // Déjà pris ? On ajoute un numéro : a_mar2, a_mar3...
         $identifiant = $base;
         $numero = 2;
         while ($this->utilisateurRepository->identifiantExiste($identifiant)) {
