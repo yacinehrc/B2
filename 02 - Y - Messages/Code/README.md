@@ -244,8 +244,6 @@ flowchart LR
     cs ---|"0,1"| M
 ```
 
-**Comment le lire :** dans chaque entité, le premier attribut (`id`) est l'identifiant (il serait souligné sur papier). Les cardinalités se lisent « min, max » : `0,n` = zéro ou plusieurs, `1,1` = exactement un, `1,n` = au moins un. Exemple : un utilisateur peut envoyer `0,n` demandes d'ami, mais un contact a `1,1` seul demandeur.
-
 Deux règles qu'on ne voit pas sur le schéma :
 
 - un message appartient **soit** à une discussion, **soit** à un salon (jamais les deux, jamais aucun) — d'où le `0,1` des deux côtés ;
