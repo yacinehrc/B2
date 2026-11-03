@@ -72,10 +72,10 @@ Sur écran tactile, les boutons qui n'apparaissent qu'au survol sur ordinateur (
 
 À installer une seule fois sur ton PC :
 
-- [PHP 8.4](https://windows.php.net/download/) avec les extensions `pdo_mysql`, `intl` et `mbstring`
+- [PHP 8.4 ou plus](https://www.php.net/downloads.php) avec les extensions `pdo_mysql` et `fileinfo` activées
 - [Composer](https://getcomposer.org/download/)
-- [Symfony CLI](https://symfony.com/download)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/), ou un MySQL 8 / MariaDB 10.4+ déjà installé (XAMPP, WAMP, Laragon...)
+- [Symfony CLI](https://symfony.com/download) (facultatif, le serveur de PHP le remplace)
 
 Pour vérifier, lance dans un terminal :
 
@@ -83,10 +83,10 @@ Pour vérifier, lance dans un terminal :
 php -v
 ```
 ```bash
-composer -V
+php -m
 ```
 ```bash
-symfony version
+composer -V
 ```
 ```bash
 docker --version
@@ -104,33 +104,63 @@ Toutes les commandes se lancent **dans le dossier du projet**, celui qui contien
 composer install
 ```
 
-**2. Démarrer Docker Desktop.** Ouvre l'application et attends que la baleine en bas à gauche soit verte (« Engine running »).
+**2. Préparer la base de données**, avec l'une de ces deux options.
 
-**3. Lancer la base de données** (MySQL + phpMyAdmin) :
+*Option A : avec Docker.* Ouvre Docker Desktop, attends que la baleine en bas à gauche soit verte (« Engine running »), puis lance :
 
 ```bash
-docker compose up -d
+docker compose up -d --wait database
 ```
 
-Au tout premier lancement, Docker télécharge MySQL (quelques minutes) puis exécute automatiquement les scripts SQL du dossier `database/` : création des tables et ajout des données de démo.
+La commande rend la main quand la base est prête. Au tout premier lancement, Docker télécharge MySQL (quelques minutes) puis exécute automatiquement les scripts SQL du dossier `database/` : création des tables et ajout des données de démo. La base écoute sur le port **3307**, pour ne pas gêner un MySQL déjà installé.
 
-**4. Vérifier que Symfony voit bien la base** :
+*Option B : sans Docker.* Crée un fichier `.env.local` à côté de `.env`, avec **une seule** de ces lignes, à adapter (mot de passe, port et version du serveur) :
+
+```bash
+# XAMPP, WAMP ou Laragon avec MariaDB (root sans mot de passe)
+DATABASE_URL="mysql://root:@127.0.0.1:3306/y_messages?serverVersion=10.4.32-MariaDB&charset=utf8mb4"
+```
+
+```bash
+# MySQL
+DATABASE_URL="mysql://root:MOT_DE_PASSE@127.0.0.1:3306/y_messages?serverVersion=8.4&charset=utf8mb4"
+```
+
+Puis crée la base et ses tables :
+
+```bash
+php bin/console doctrine:database:create
+```
+
+```bash
+php bin/console doctrine:migrations:migrate --no-interaction
+```
+
+Pour avoir les comptes de démo, importe `database/02_donnees_demo.sql` dans la base `y_messages` avec phpMyAdmin (onglet *Importer*). Sans cet import, crée simplement un compte sur la page d'inscription.
+
+**3. Vérifier que Symfony voit bien la base** :
 
 ```bash
 php bin/console doctrine:schema:validate
 ```
 
-Les deux lignes doivent être `[OK]`. Si la ligne *Database* est en erreur, attends 20 secondes, le temps que MySQL finisse de démarrer, puis relance la commande.
+Les deux lignes doivent être `[OK]`.
 
-**5. Lancer le serveur web Symfony** :
+**4. Lancer le serveur web** :
 
 ```bash
 symfony serve -d
 ```
 
-**6. Ouvrir l'application** : <http://127.0.0.1:8000>. Si le port 8000 est déjà pris (par un autre projet), Symfony en choisit un autre, comme 8001 : utilise l'adresse affichée par la commande.
+Sans Symfony CLI, utilise le serveur intégré à PHP, à laisser ouvert dans son terminal :
 
-Pour voir la base de données : <http://localhost:8081> (phpMyAdmin, utilisateur `ymessages`, mot de passe `ymessages`).
+```bash
+php -S 127.0.0.1:8000 -t public
+```
+
+**5. Ouvrir l'application** : <http://127.0.0.1:8000>. Si le port 8000 est déjà pris (par un autre projet), Symfony en choisit un autre, comme 8001 : utilise l'adresse affichée par la commande.
+
+Pour voir la base de données avec Docker, lance `docker compose up -d phpmyadmin` puis ouvre <http://localhost:8081> (utilisateur `ymessages`, mot de passe `ymessages`).
 
 ---
 
@@ -153,11 +183,11 @@ Tous ces comptes ont le mot de passe **`motdepasse`** :
 
 | Action | Commande |
 |---|---|
-| Démarrer la base | `docker compose up -d` |
+| Démarrer la base | `docker compose up -d --wait database` |
 | Démarrer le site | `symfony serve -d` |
 | Arrêter le site | `symfony server:stop` |
 | Arrêter la base (les données sont gardées) | `docker compose stop` |
-| **Remettre la base à zéro** (supprime tout puis relance les scripts SQL) | `docker compose down -v` puis `docker compose up -d` |
+| **Remettre la base à zéro** (supprime tout puis relance les scripts SQL) | `docker compose down -v` puis `docker compose up -d --wait database` |
 | Voir les logs de Symfony | `symfony server:log` |
 | Vider le cache | `php bin/console cache:clear` |
 
@@ -194,6 +224,7 @@ y-messages/
 │   ├── Entity/                        → Les classes PHP = les tables de la base
 │   │   ├── Utilisateur.php, Contact.php, Discussion.php
 │   │   └── Serveur.php, Salon.php, Message.php
+│   ├── Migrations/                    → Crée les tables pour une installation sans Docker
 │   ├── Form/                          → Les formulaires Symfony
 │   │   ├── InscriptionType.php, ProfilType.php, MessageType.php
 │   │   └── NomType.php, NouvelleDiscussionType.php
@@ -297,11 +328,14 @@ Pour voir toutes les routes : `php bin/console debug:router`
 
 | Problème | Solution |
 |---|---|
-| `An exception occurred in the driver: SQLSTATE[HY000] [2002]` | MySQL n'est pas lancé : démarre Docker Desktop puis `docker compose up -d`. |
+| `An exception occurred in the driver: SQLSTATE[HY000] [2002]` | MySQL n'est pas lancé : démarre Docker Desktop puis `docker compose up -d --wait database`, ou démarre MySQL dans XAMPP / WAMP. |
+| `SQLSTATE[HY000] [1045] Access denied` | Identifiant ou mot de passe incorrect dans `.env.local`. |
+| `SQLSTATE[HY000] [1049] Unknown database` | La base n'existe pas encore : lance `php bin/console doctrine:database:create` (installation sans Docker). |
 | `docker: failed to connect to the docker API` | Docker Desktop n'est pas démarré, ou démarre encore : attends que la baleine soit verte. |
-| `port is already allocated` (3306 ou 8081) | Un autre MySQL (XAMPP, WAMP...) utilise déjà ce port : arrête-le, ou change `"3306:3306"` en `"3307:3306"` dans `compose.yaml` et `127.0.0.1:3306` en `127.0.0.1:3307` dans `.env`. |
-| `could not find driver` | L'extension MySQL de PHP n'est pas activée : dans `php.ini` (chemin donné par `php --ini`), retire le `;` devant `extension=pdo_mysql`, puis relance le serveur. Même chose pour `intl` et `mbstring` si Composer les réclame. |
-| Les comptes de démo n'existent pas | Les scripts SQL ne s'exécutent qu'au **premier** démarrage. Remets la base à zéro : `docker compose down -v` puis `docker compose up -d`. |
+| `port is already allocated` (3307 ou 8081) | Un autre programme utilise déjà ce port : change `"3307:3306"` dans `compose.yaml`, puis crée un `.env.local` qui reprend `DATABASE_URL` du fichier `.env` avec le nouveau port. |
+| `composer install` signale `ext-pdo_mysql` ou `ext-fileinfo` manquant, ou `could not find driver` | L'extension n'est pas activée : dans `php.ini` (chemin donné par `php --ini`), retire le `;` devant `extension=pdo_mysql` et `extension=fileinfo`, puis relance le serveur. |
+| `Filename too long` pendant le `git clone` | Recommence depuis un dossier au chemin plus court, avec `git clone -c core.longpaths=true`. |
+| Les comptes de démo n'existent pas | Les scripts SQL ne s'exécutent qu'au **premier** démarrage. Remets la base à zéro : `docker compose down -v` puis `docker compose up -d --wait database`. |
 | `Table ... doesn't exist` | Même solution que ci-dessus. |
 | Le style ne s'affiche pas | Bootstrap et Tailwind viennent d'Internet (CDN) : vérifie ta connexion. |
 | Page blanche ou erreur bizarre | `php bin/console cache:clear` |
@@ -338,5 +372,5 @@ Le projet couvre l'essentiel de Discord, mais plusieurs évolutions permettraien
 | **Auto-refresh plus léger** | Le polling renvoie toute la liste des messages à chaque fois. | Ne renvoyer que les messages postés après le dernier reçu. |
 | **Protection de la connexion** | Rien n'empêche de tester des milliers de mots de passe. | `login_throttling` de Symfony et règles de mot de passe plus strictes. |
 | **Assets en local** | Bootstrap et Tailwind viennent d'un CDN : le site dépend d'Internet, et le CDN de Tailwind est déconseillé en production. | AssetMapper de Symfony et compilation de Tailwind. |
-| **Une seule source pour le schéma** | La structure existe à la fois dans les entités et dans `01_schema.sql`. | Utiliser uniquement les migrations Doctrine et garder le SQL pour les données de démo. |
+| **Une seule source pour le schéma** | La structure existe à la fois dans les entités, dans `01_schema.sql` et dans la migration. | Utiliser uniquement les migrations Doctrine et garder le SQL pour les données de démo. |
 | **Déploiement** | PHP doit être installé sur la machine. | Ajouter un conteneur PHP (FrankenPHP) pour tout lancer avec `docker compose up`. |

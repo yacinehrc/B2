@@ -198,7 +198,7 @@ Les associations *participer* et *être membre* deviennent les tables de liaison
 | `salon` | Salons rattachés à un serveur |
 | `message` | Messages rattachés à une discussion ou à un salon |
 
-Les scripts de création et les données de démonstration se trouvent dans [`Code/database/`](./Code/database/).
+Les scripts de création et les données de démonstration se trouvent dans [`Code/database/`](./Code/database/). Une migration Doctrine ([`Code/src/Migrations/`](./Code/src/Migrations/)) crée les mêmes tables pour une installation sans Docker.
 
 ---
 
@@ -215,70 +215,127 @@ Les scripts de création et les données de démonstration se trouvent dans [`Co
 
 ## Installation
 
+Le projet s'installe **avec Docker** (le plus simple) ou **sans Docker**, sur un MySQL ou un MariaDB déjà installé (XAMPP, WAMP, Laragon...). Seule l'étape 3 change.
+
 ### Prérequis
 
 | Outil | Rôle | Vérification |
 |---|---|---|
-| [PHP 8.4](https://windows.php.net/download/) | Langage du projet, avec les extensions `pdo_mysql`, `intl` et `mbstring` | `php -v` |
-| [Composer](https://getcomposer.org/download/) | Installe les bibliothèques PHP (Symfony, Doctrine...) | `composer -V` |
-| [Symfony CLI](https://symfony.com/download) | Lance le serveur web local | `symfony version` |
-| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | Fait tourner MySQL et phpMyAdmin sans les installer | `docker --version` |
-| [Git](https://git-scm.com/downloads) *(facultatif)* | Récupère le dépôt | `git --version` |
+| [PHP 8.4 ou plus](https://www.php.net/downloads.php) | Langage du projet, avec les extensions `pdo_mysql` et `fileinfo` activées | `php -v` puis `php -m` |
+| [Composer](https://getcomposer.org/download/) | Installe les bibliothèques PHP | `composer -V` |
+| [Docker Desktop](https://www.docker.com/products/docker-desktop/) **ou** MySQL 8 / MariaDB 10.4+ | Base de données | `docker --version` |
+| [Symfony CLI](https://symfony.com/download) *(facultatif)* | Serveur web local, remplaçable par celui de PHP | `symfony version` |
 
-### Lancer le projet
+Une connexion Internet reste nécessaire pendant l'utilisation : Bootstrap et Tailwind sont chargés depuis un CDN.
 
-**1. Récupérer le projet**, avec Git ou en téléchargeant le ZIP du dépôt (bouton *Code* → *Download ZIP*) :
+### 1. Récupérer le projet
+
+Le dépôt contient plusieurs projets : l'application se trouve dans `02 - Y - Messages/Code`. Sous Windows, il vaut mieux le placer dans un dossier au chemin court (`C:\dev`, par exemple), car certains noms de fichiers du dépôt sont longs.
 
 ```bash
-git clone https://github.com/yacinehrc/B2.git
+git clone -c core.longpaths=true https://github.com/yacinehrc/B2.git
 ```
-
-**2. Se placer dans le dossier de l'application.** Les guillemets sont nécessaires à cause des espaces dans le nom :
 
 ```bash
 cd "B2/02 - Y - Messages/Code"
 ```
 
-**3. Installer les dépendances PHP.** Composer crée le dossier `vendor/` :
+Toutes les commandes suivantes se lancent dans ce dossier.
+
+### 2. Installer les dépendances
 
 ```bash
 composer install
 ```
 
-**4. Démarrer la base de données.** Ouvrir d'abord Docker Desktop et attendre l'indication *Engine running*, puis :
+### 3. Préparer la base de données
+
+#### Option A : avec Docker
+
+Ouvrir Docker Desktop, attendre l'indication *Engine running*, puis lancer :
 
 ```bash
-docker compose up -d
+docker compose up -d --wait database
 ```
 
-Au premier lancement, Docker télécharge MySQL puis exécute les scripts de [`Code/database/`](./Code/database/), qui créent les tables et ajoutent les données de démonstration. Il faut compter une à deux minutes.
+La commande rend la main quand la base est prête (une à deux minutes la première fois, le temps de télécharger MySQL). Les tables et les comptes de test sont créés automatiquement par les scripts de [`Code/database/`](./Code/database/). La base écoute sur le port **3307**, pour ne pas gêner un MySQL déjà installé. Aucune configuration n'est à modifier.
 
-**5. Vérifier la connexion à la base.** Les deux lignes doivent afficher `[OK]` ; si ce n'est pas le cas, MySQL est encore en train de démarrer : patienter quelques secondes puis relancer.
+#### Option B : sans Docker
+
+Créer dans le dossier `Code` un fichier nommé `.env.local`, contenant **une seule** de ces lignes, à adapter (mot de passe, port et version du serveur) :
+
+```bash
+# XAMPP, WAMP ou Laragon avec MariaDB (root sans mot de passe)
+DATABASE_URL="mysql://root:@127.0.0.1:3306/y_messages?serverVersion=10.4.32-MariaDB&charset=utf8mb4"
+```
+
+```bash
+# MySQL
+DATABASE_URL="mysql://root:MOT_DE_PASSE@127.0.0.1:3306/y_messages?serverVersion=8.4&charset=utf8mb4"
+```
+
+Créer ensuite la base et ses tables avec Doctrine :
+
+```bash
+php bin/console doctrine:database:create
+```
+
+```bash
+php bin/console doctrine:migrations:migrate --no-interaction
+```
+
+Pour disposer des comptes de test, importer le fichier [`database/02_donnees_demo.sql`](./Code/database/02_donnees_demo.sql) dans la base `y_messages` avec phpMyAdmin (onglet *Importer*). Sans cet import, l'application fonctionne aussi : il suffit de créer un compte sur la page d'inscription.
+
+### 4. Vérifier la base
+
+Les deux lignes affichées doivent indiquer `[OK]` :
 
 ```bash
 php bin/console doctrine:schema:validate
 ```
 
-**6. Démarrer le serveur web :**
+### 5. Démarrer le site
+
+Avec Symfony CLI :
 
 ```bash
 symfony serve -d
 ```
 
-**7. Ouvrir l'application** sur <http://127.0.0.1:8000> et se connecter avec un [compte de test](#identifiants-de-test), par exemple `a_mar` / `motdepasse`. Si le port 8000 est déjà utilisé, Symfony en choisit un autre et affiche la bonne adresse.
+Ou, sans Symfony CLI, avec le serveur intégré à PHP (à laisser ouvert dans son terminal) :
 
-La base de données peut être consultée avec phpMyAdmin sur <http://localhost:8081> (utilisateur `ymessages`, mot de passe `ymessages`).
+```bash
+php -S 127.0.0.1:8000 -t public
+```
+
+### 6. Ouvrir l'application
+
+Aller sur <http://127.0.0.1:8000> (ou l'adresse affichée par Symfony si le port 8000 est déjà pris) et se connecter avec un [compte de test](#identifiants-de-test), par exemple `a_mar` / `motdepasse`.
+
+Pour consulter la base avec Docker, phpMyAdmin se lance séparément avec `docker compose up -d phpmyadmin`, puis s'ouvre sur <http://localhost:8081> (utilisateur `ymessages`, mot de passe `ymessages`).
+
+### En cas de problème
+
+| Message | Cause et solution |
+|---|---|
+| `composer install` signale `php` ou `ext-...` manquant | PHP est trop ancien ou une extension est désactivée. Dans le fichier `php.ini` (indiqué par `php --ini`), retirer le `;` devant `extension=pdo_mysql` et `extension=fileinfo`. |
+| `Connection refused` ou `SQLSTATE[HY000] [2002]` | La base n'est pas démarrée. Lancer Docker Desktop puis l'étape 3, ou démarrer MySQL dans XAMPP / WAMP. |
+| `SQLSTATE[HY000] [1045] Access denied` | Identifiant ou mot de passe incorrect dans `.env.local`. |
+| `SQLSTATE[HY000] [1049] Unknown database` | La base n'existe pas encore : lancer `doctrine:database:create` (option B). |
+| `port is already allocated` | Le port 3307 est déjà pris. Changer `"3307:3306"` dans `compose.yaml`, puis créer un `.env.local` qui reprend `DATABASE_URL` du fichier `.env` avec le nouveau port. |
+| `Table ... doesn't exist` ou comptes de test absents | Remettre la base à zéro : `docker compose down -v`, puis l'étape 3 (option A). |
+| `Filename too long` pendant le `git clone` | Recommencer depuis un dossier au chemin plus court. |
 
 ### Commandes utiles
 
 | Action | Commande |
 |---|---|
-| Arrêter le serveur web | `symfony server:stop` |
+| Arrêter le serveur web | `symfony server:stop` (ou `Ctrl + C` avec le serveur PHP) |
 | Arrêter la base (les données sont conservées) | `docker compose stop` |
-| Relancer le projet plus tard | `docker compose up -d` puis `symfony serve -d` |
-| Remettre la base à zéro avec les données de démonstration | `docker compose down -v` puis `docker compose up -d` |
+| Relancer le projet plus tard | `docker compose up -d --wait database` puis `symfony serve -d` |
+| Remettre la base à zéro avec les données de démonstration | `docker compose down -v` puis `docker compose up -d --wait database` |
 
-Le guide technique [`Code/README.md`](./Code/README.md) détaille la structure du code, les routes et les solutions aux problèmes courants (port occupé, Docker qui ne démarre pas, extension PHP manquante...).
+Le guide technique [`Code/README.md`](./Code/README.md) détaille la structure du code et les routes.
 
 ---
 
