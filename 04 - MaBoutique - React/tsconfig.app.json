@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023", "DOM"],
+    "module": "esnext",
+    "types": ["vite/client"],
+    "allowArbitraryExtensions": true,
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true, // Autorise l'importation de fichiers .ts et .tsx avec leur extension.
+    "verbatimModuleSyntax": true, // Oblige à écrire "import type" pour les types, sinon erreur.
+    "moduleDetection": "force",
+    "noEmit": true, // TypeScript vérifie seulement le code, il ne le compile pas. C'est Vite qui s'en charge.
+    "jsx": "react-jsx", // Le JSX est du React, pas besoin de l'importer.
+
+    /* Linting */
+    "noUnusedLocals": true, // Signale les variables inutilisées.
+    "noUnusedParameters": true, // Signale les paramètres inutilisés.
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"]
+}

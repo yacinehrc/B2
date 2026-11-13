@@ -1,0 +1,5 @@
+Objectif des 3 fichiers "tsconfig..." est de configurer TypeScript :
+
+- tsconfig.app.json → contient les règles pour le code du site (include: ["src"]), qui tourne dans le navigateur ("lib" contient "DOM")
+- tsconfig.json → ne contient quasi rien : il renvoie vers les 2 autres fichiers tsconfig
+- tsconfig.node.json → contient les règles pour vite.config.ts qui tourne sur la machine avec Node.js
