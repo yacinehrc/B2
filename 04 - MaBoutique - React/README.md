@@ -205,22 +205,16 @@ Ouvrir ensuite <http://localhost:5173> dans le navigateur.
 
 ## Difficultés rencontrées
 
-- **Comprendre la différence entre props, state et hooks** : il a fallu bien distinguer les données reçues du parent (props), la mémoire propre à un composant (state) et l'outil qui crée cette mémoire (`useState`).
 - **Partager le panier entre plusieurs pages** : le Header, le catalogue, le panier et la commande ont tous besoin du panier. Il a été placé dans `App`, leur parent commun, et transmis par les props.
 - **Sécuriser le formulaire** : au départ, le formulaire acceptait n'importe quel texte (par exemple `@@@` comme adresse ou des chiffres comme ville). Chaque champ est maintenant vérifié avec une regex.
-- **Le panier perdu au rechargement** : le panier n'existe qu'en mémoire. Un rechargement de la page (F5) ou une sauvegarde de fichier pendant le développement le remet à zéro, ce qui pouvait faire croire que le formulaire rechargeait la page.
-- **Erreurs de syntaxe JSX** : une ligne `return (` supprimée par erreur en ajoutant des commentaires provoquait une erreur loin de sa vraie cause. Cela m'a appris à chercher l'ouverture d'une parenthèse quand l'erreur pointe sur sa fermeture.
 
 ---
 
 ## Perspectives d'évolution
 
-- **Page de détail d'un produit** : route `/produit/:id` avec le hook `useParams`
 - **Panier sauvegardé** : conserver le panier dans le `localStorage` pour qu'il survive à un rechargement
-- **Envoi de la commande** : transmettre les données à une API avec `fetch` en méthode `POST`, avec une vérification côté serveur
-- **Context React** : partager le panier sans le passer de props en props
 - **Recherche et filtres** : filtrer le catalogue par catégorie ou par prix
-- **Mise en ligne** : déployer le dossier `dist/` sur un hébergeur comme Netlify, Vercel ou GitHub Pages
+- **Design** : améliorer le design pour un site d'e-commerce professionnel
 
 ---
 
