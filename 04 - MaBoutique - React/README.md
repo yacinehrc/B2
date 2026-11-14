@@ -3,6 +3,7 @@
 ![Catalogue de la boutique](./Images/catalogue.png)
 
 > Site e-commerce réalisé en **React** et **TypeScript** à partir d'un projet **Vite** : catalogue de produits chargé depuis une **API JSON**, panier avec gestion des quantités et formulaire de commande sécurisé. Projet du cours **Framework JS**.
+> Démo disponible : https://yacineharrache.fr/maboutique-react/
 
 ---
 
